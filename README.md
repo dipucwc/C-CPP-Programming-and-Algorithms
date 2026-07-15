@@ -2,7 +2,7 @@
 
 ## Overview
 
-This repository contains intermediate-to-advanced **C and C++ programming projects, data-structure implementations, numerical algorithms, and engineering-oriented software modules**.
+This repository contains intermediate-to-advanced C and C++ programming projects, data-structure implementations, numerical algorithms, and engineering-oriented software modules.
 
 The repository focuses on writing structured, reusable, testable, and computationally efficient code for applications related to:
 
