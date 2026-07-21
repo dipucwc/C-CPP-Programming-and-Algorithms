@@ -39,56 +39,54 @@
 
 namespace plate {
 
-constexpr std::size_t kPlateLen    = 7;   // Total characters in a well-formed plate, e.g. ABC-123.
-constexpr std::size_t kLetterCount = 3;   // Uppercase letters at the start of the plate.
-constexpr std::size_t kDashPos     = 3;   // Zero-based index of the separating dash.
-constexpr std::size_t kDigitStart  = 4;   // Zero-based index where the digit field begins.
-constexpr std::size_t kDigitCount  = 3;   // Decimal digits at the end of the plate.
+constexpr std::size_t kPlateLen    = 7;   // Format ABC-123: 3 letters + dash + 3 digits.
+constexpr std::size_t kLetterCount = 3;
+constexpr std::size_t kDashPos     = 3;
+constexpr std::size_t kDigitStart  = 4;
+constexpr std::size_t kDigitCount  = 3;
 
-// is_upper: safe uppercase-letter test that avoids undefined behaviour on negative chars.
+// The cast is required: passing a plain char that is negative (non-ASCII input)
+// to std::isupper/std::isdigit is undefined behaviour in C and C++.
 bool is_upper(char c) {
-    return std::isupper(static_cast<unsigned char>(c)) != 0;   // Cast guards non-ASCII input.
+    return std::isupper(static_cast<unsigned char>(c)) != 0;
 }
 
-// is_digit: safe decimal-digit test using the same defensive cast.
 bool is_digit(char c) {
-    return std::isdigit(static_cast<unsigned char>(c)) != 0;   // Cast guards non-ASCII input.
+    return std::isdigit(static_cast<unsigned char>(c)) != 0;
 }
 
-// letters_ok: true when the first kLetterCount characters are all uppercase letters.
 bool letters_ok(std::string_view s) {
-    auto field = s.substr(0, kLetterCount);                    // The leading letter field.
-    return std::all_of(field.begin(), field.end(), is_upper);  // Every character must be uppercase.
+    auto field = s.substr(0, kLetterCount);
+    return std::all_of(field.begin(), field.end(), is_upper);
 }
 
-// dash_ok: true when the separator position holds a single dash.
 bool dash_ok(std::string_view s) {
-    return s[kDashPos] == '-';                                 // The fourth character must be a dash.
+    return s[kDashPos] == '-';
 }
 
-// digits_ok: true when the last kDigitCount characters are all decimal digits.
 bool digits_ok(std::string_view s) {
-    auto field = s.substr(kDigitStart, kDigitCount);           // The trailing digit field.
-    return std::all_of(field.begin(), field.end(), is_digit);  // Every character must be a digit.
+    auto field = s.substr(kDigitStart, kDigitCount);
+    return std::all_of(field.begin(), field.end(), is_digit);
 }
 
-// is_valid: combine the length and field checks into one verdict.
 bool is_valid(std::string_view s) {
-    if (s.size() != kPlateLen) return false;                   // Wrong length is rejected first.
-    return letters_ok(s) && dash_ok(s) && digits_ok(s);        // All three field checks must hold.
+    // Length must be checked first: the field checks below index fixed
+    // positions and would read out of range on a shorter string.
+    if (s.size() != kPlateLen) return false;
+    return letters_ok(s) && dash_ok(s) && digits_ok(s);
 }
 
 }  // namespace plate
 
 int main() {
-    std::string line;                                          // The input line.
+    std::string line;
 
-    std::cout << "Write a plate number: ";                     // Prompt the user.
-    if (!std::getline(std::cin, line)) return 0;               // Read one line; stop cleanly on EOF.
+    std::cout << "Write a plate number: ";
+    if (!std::getline(std::cin, line)) return 0;   // EOF: exit cleanly instead of using an empty string.
 
-    std::cout << line << " is "                                // Report the single verdict.
+    std::cout << line << " is "
               << (plate::is_valid(line) ? "a valid" : "not a valid")
               << " plate number.\n";
 
-    return 0;                                                  // Normal completion.
+    return 0;
 }
