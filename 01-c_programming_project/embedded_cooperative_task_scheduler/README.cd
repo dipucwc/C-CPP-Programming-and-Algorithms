@@ -1,0 +1,37 @@
+# Embedded Cooperative Task Scheduler
+
+A C99 tick-driven cooperative scheduler of the kind that runs the main loop of non-RTOS firmware: periodic tasks with phase offsets, registration-order priority, an interrupt-safe tick, and honest overrun accounting when the loop falls behind.
+
+## Overview
+
+Most firmware does not need an RTOS; it needs a disciplined main loop. This scheduler provides that discipline. Tasks register with a function, a context pointer, a period in ticks, and a phase offset — the offset staggers tasks that share a period so their execution does not pile onto the same tick. A hardware timer interrupt calls `sched_tick()`, which only increments a volatile counter and is therefore minimal at interrupt time; the main loop calls `sched_run()`, which dispatches every due task in registration order, making registration order the priority order.
+
+The distinguishing design decision is the catch-up policy. When the main loop falls behind, a naive scheduler either replays the backlog — calling a late task once per missed period, in a burst, with stale phase — or silently collapses the missed activations as if nothing happened. This scheduler does neither: it runs each late task exactly once, counts every missed activation in a per-task overrun counter, and realigns the schedule forward. A latent real-time problem becomes a measurable number instead of a silent lie.
+
+## Structure and build
+
+```
+task_scheduler/
+├── include/scheduler.h     Task table, tick, run, enable control
+├── src/scheduler.c
+├── tests/test_scheduler.c  Rates, stagger, priority, enable, overrun accounting
+└── Makefile                make test
+```
+
+Builds with zero warnings under `gcc -std=c99 -Wall -Wextra -Wpedantic -O2`.
+
+## Verified results
+
+```
+[test_scheduler] rates + stagger + priority + enable + overrun -> PASS
+```
+
+The five verified properties: over 1000 promptly served ticks, a period-10 task runs exactly 100 times and a period-25 task exactly 40 times, with zero overruns; two tasks sharing period 10 with offsets 0 and 5 never execute on the same tick; when two tasks fall due on the same tick, the earlier-registered one demonstrably runs first (observed through a shared sequence log); a disabled task stops exactly and resumes exactly; and after 100 ticks arrive unserved, a period-10 task is dispatched once with 9 counted overruns — runs plus overruns equal the 10 activations an ideal loop would have delivered — after which the realigned schedule delivers clean rates again.
+
+## A bug found by execution
+
+The first implementation served the backlog tick-by-tick, which silently replayed history: after 100 unserved ticks, the period-10 task was dispatched 10 times in a burst with zero overruns — precisely the stale-catch-up behaviour the module's own header promised to prevent. The test suite caught the contradiction between the stated policy and the code; the fix serves each pending batch as one instant. The failure and the fix are visible in the repository history.
+
+## Author
+
+**Md Moklesur Rahman** — GitHub: [dipucwc](https://github.com/dipucwc) · [LinkedIn](https://www.linkedin.com/in/md-moklesur-rahman-65a63962/)
