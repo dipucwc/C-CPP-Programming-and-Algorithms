@@ -1,0 +1,88 @@
+# IQ Imbalance Estimation and Compensation
+
+A C++17 project implementing a quadrature receiver IQ imbalance model, blind estimation of the impairment parameters from second-order signal statistics, exact compensation, and verification through image rejection ratio (IRR) measurement — the standard RF figure of merit for this impairment.
+
+## Overview
+
+In a direct-conversion quadrature receiver, the I and Q analogue paths are never perfectly matched: component tolerances produce a gain mismatch and a quadrature phase error between the rails, plus DC offsets. The consequence in the frequency domain is an image of the received signal mirrored across DC. The image rejection ratio quantifies the problem: with 1 dB gain error and 5 degrees phase error, the IRR is only about 23 dB, far below what a multi-carrier receiver requires.
+
+This project implements the full digital correction chain. The impairment follows the standard receiver model (I rail as reference, Q rail carrying the relative gain and phase error). The estimator is blind — it uses only received samples and the properness (circularity) of the ideal signal: DC offsets are the rail means, the gain mismatch is the square root of the rail power ratio, and the sine of the phase error is the normalized cross-correlation of the rails. The compensator applies the exact algebraic inverse of the model, so the residual image is limited only by finite-sample estimation accuracy.
+
+## Project structure
+
+```
+iq_imbalance_compensation/
+├── include/
+│   └── iq_imbalance.h        Model, blind estimator, compensator, IRR measurement
+├── src/
+│   ├── iq_imbalance.cpp      Implementation (moment estimator, exact inverse, 2-bin DFT)
+│   └── main.cpp              Demo: tone -> impairment -> estimate -> compensate -> IRR
+├── tests/
+│   └── test_iq_imbalance.cpp Four property tests with fixed seeds (reproducible)
+└── CMakeLists.txt            Static library + demo + ctest integration
+```
+
+## Build and run
+
+With CMake:
+
+```bash
+cmake -B build
+cmake --build build
+./build/iq_demo
+ctest --test-dir build
+```
+
+Directly with g++:
+
+```bash
+g++ -std=c++17 -Wall -Wextra -Iinclude src/iq_imbalance.cpp src/main.cpp -o iq_demo
+g++ -std=c++17 -Wall -Wextra -Iinclude src/iq_imbalance.cpp tests/test_iq_imbalance.cpp -o test_iq
+./test_iq && ./iq_demo
+```
+
+Both build with zero warnings under `-Wall -Wextra` (GCC, C++17).
+
+## Verified results
+
+Demo output (4096-sample complex tone, impairment: 1 dB gain, 5° phase, DC offsets 0.01 / −0.02):
+
+```
+  parameter        true        estimated
+  gain (linear)    1.122018    1.122018
+  phase (deg)      5.0000      5.0000
+  dc offset I      0.010000    0.010000
+  dc offset Q      -0.020000   -0.020000
+
+  IRR before compensation :   22.83 dB
+  IRR after compensation  :  293.59 dB
+  improvement             :  270.76 dB
+```
+
+On the deterministic tone the estimator recovers all four parameters to printed precision, and compensation suppresses the image to the numerical noise floor. The unit tests exercise the statistically realistic case: on a random QPSK-like signal, blind estimates converge to the truth within 5e-3 (gain, radians, and DC), and blind compensation of the tone is required to improve IRR by at least 30 dB.
+
+Test suite (all pass, exit code 0):
+
+```
+[test_iq_imbalance] inverse + estimation + irr + clean -> PASS
+```
+
+The four properties: (1) compensating with the *true* parameters reconstructs the input to < 1e-12, proving the compensator is the exact model inverse; (2) blind estimates on a 400k-sample proper QPSK record match the truth within tolerance, with the sample count chosen to give 3× statistical margin over the estimator's standard error; (3) blind compensation improves tone IRR by ≥ 30 dB; (4) estimation on a clean signal returns near-identity parameters, so correcting a healthy receiver does no harm.
+
+## Technical notes
+
+**Why the blind estimator works.** For a proper complex signal, the two rails are equal-power and uncorrelated. The impairment breaks both symmetries in a parameter-revealing way: the rail power ratio isolates the gain error and the rail cross-correlation isolates the phase error. The estimator is exact in expectation; its finite-sample standard error scales as 1/sqrt(N), which the test tolerances account for explicitly.
+
+**IRR measurement without an FFT.** Only two spectral bins are needed (tone and image), so the measurement correlates directly against complex exponentials at ±f0 — a two-bin DFT with no library dependency. The tone frequency is chosen to give an integer number of cycles over the record, keeping the bins leakage-free.
+
+**A bug found by execution.** The initial test tolerance for the phase estimate (5e-3 rad at 100k samples) left no statistical margin and failed intermittently; the record was extended to 400k samples, halving the standard error and giving reproducible 3× margin. The tolerance was deliberately not loosened — the fix addresses the statistics, not the symptom.
+
+## Reference
+
+M. Valkama, M. Renfors, V. Koivunen, "Advanced methods for I/Q imbalance compensation in communication receivers," IEEE Transactions on Signal Processing, 2001 (blind moment-based estimation).
+
+## Author
+
+**Md Moklesur Rahman**
+- GitHub: [dipucwc](https://github.com/dipucwc)
+- LinkedIn: [Md Moklesur Rahman](https://www.linkedin.com/in/md-moklesur-rahman-65a63962/)
