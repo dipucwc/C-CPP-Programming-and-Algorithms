@@ -1,0 +1,77 @@
+# Fixed-Point DSP Toolkit in C
+
+A C99 project implementing the core building blocks of an embedded signal-processing path — Q15 fixed-point arithmetic, a circular sample buffer, a streaming moving-average filter, and RMS power measurement — with unit tests for every module and a demonstration chain that filters a noisy sine and verifies the result against theory.
+
+## Overview
+
+Embedded baseband and audio processors frequently run without a floating-point unit, so samples are processed as Q15 fixed-point values: real numbers in [-1, +1) stored in signed 16-bit integers with 15 fractional bits. This project implements that arithmetic correctly — saturating instead of wrapping on overflow, rounding instead of truncating on renormalization — and builds three modules on top of it that appear in virtually every real-time signal chain.
+
+All modules use caller-owned storage and perform no dynamic allocation, so the code is usable on bare-metal targets where `malloc` is unavailable or forbidden. Every function that can fail returns a status code, and every module ships with a framework-free unit test that returns a CI-usable exit code.
+
+## Project structure
+
+```
+fixed_point_dsp_toolkit/
+├── include/
+│   ├── q15.h                Q15 type, saturating add/sub, rounding multiply
+│   ├── ring_buffer.h        Fixed-capacity circular buffer, caller-owned storage
+│   └── dsp_filters.h        Streaming moving average and block RMS
+├── src/
+│   ├── ring_buffer.c
+│   ├── dsp_filters.c        O(1) moving average; RMS with integer Newton sqrt
+│   └── main.c               Demo: noisy sine -> ring buffer -> filter -> RMS
+├── tests/
+│   ├── test_q15.c           Saturation, rounding, identities, round-trip accuracy
+│   ├── test_ring_buffer.c   Order, limits, wrap-around, argument validation
+│   └── test_dsp_filters.c   Constant input, step response, sine RMS vs. theory
+└── Makefile
+```
+
+## Build and run
+
+```bash
+make          # build the demo and all tests
+make test     # build and run all three test suites
+./dsp_demo    # run the demonstration chain
+make clean
+```
+
+Everything builds with zero warnings under `gcc -std=c99 -Wall -Wextra -Wpedantic -O2`.
+
+## Verified results
+
+Test suites (all pass, exit code 0):
+
+```
+[test_q15] saturation + identity + rounding + round-trip -> PASS
+[test_ring_buffer] order + limits + wrap-around + args -> PASS
+[test_dsp_filters] constant + step + sine-rms + dc-rms -> PASS
+```
+
+Demonstration output (fixed noise seed, reproducible):
+
+```
+Fixed-point DSP chain demo (2048 samples, 16-tap moving average)
+  RMS clean sine      : 0.2828  (theory A/sqrt(2) = 0.2828)
+  RMS noisy input     : 0.2902
+  RMS filtered output : 0.2830
+  noise reduced       : yes
+```
+
+The measured RMS of the clean sine matches the theoretical A/sqrt(2) = 0.4/1.4142 = 0.2828 exactly at the printed precision, and the 16-tap moving average brings the noisy signal (0.2902) back to within 0.0002 of the clean level — the entire measurement path running in fixed point.
+
+## Technical notes
+
+**Q15 arithmetic.** Addition widens to 32 bits before summing, because signed 16-bit overflow is undefined behaviour in C. Multiplication forms a Q30 product in a 32-bit accumulator and renormalizes with a rounding constant (`1 << 14`) added before the shift, which halves the bias relative to truncation; the unit test pins this by requiring 0.5 × 0.5 to equal 0.25 exactly.
+
+**Ring buffer.** Uses an explicit count field rather than the one-slot-empty idiom, so the full capacity is usable and the full/empty states are trivially distinct. Capacity may be any positive size; index advance is modulo, not mask-based, so power-of-two sizes are not required.
+
+**Moving average.** Running-sum implementation: constant time per sample independent of window length. The 32-bit accumulator cannot overflow for windows shorter than 65536 samples, since each Q15 sample contributes at most 2^15. During fill-in the divisor is the number of samples seen, so output is meaningful from the first sample.
+
+**RMS.** Squares accumulate in a 64-bit Q30 sum (safe beyond 2^33 samples), and the square root is an integer Newton iteration with a bounded step count, keeping execution time deterministic — a requirement in real-time paths. sqrt(Q30) lands exactly on the Q15 scale.
+
+## Author
+
+**Md Moklesur Rahman**
+- GitHub: [dipucwc](https://github.com/dipucwc)
+- LinkedIn: [Md Moklesur Rahman](https://www.linkedin.com/in/md-moklesur-rahman-65a63962/)
