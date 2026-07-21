@@ -1,0 +1,1412 @@
+# C Programming Projects
+
+This folder contains engineering-focused C projects covering modular software design, data structures, embedded systems, signal processing, communication protocols, memory management, concurrency, real-time processing, software testing, and performance analysis.
+
+The current projects focus on practical C implementations with structured architecture, reusable modules, defensive programming, clear memory ownership, build automation, testing, and debugging.
+
+The planned projects extend the collection toward real-time firmware, fixed-point DSP, lock-free data structures, protocol development, deterministic memory management, hardware abstraction, fault handling, and production-oriented verification.
+
+## Objectives
+
+The main objectives of this folder are to:
+
+* design modular and maintainable C applications;
+* implement reusable software components;
+* develop embedded and firmware-oriented programming skills;
+* apply C to DSP, wireless, sensor, and communication applications;
+* manage memory safely and efficiently;
+* define clear interfaces between software modules;
+* implement robust error handling;
+* verify software using unit tests and integration tests;
+* detect memory and undefined-behaviour problems;
+* measure processing time, memory usage, latency, and throughput;
+* build portable applications using GCC, Clang, Make, and CMake;
+* demonstrate practical C programming for technical engineering roles.
+
+## Technical Areas
+
+The projects cover the following areas:
+
+* modular C architecture;
+* source and header file organization;
+* opaque data structures;
+* pointers and memory ownership;
+* static and dynamic memory management;
+* callbacks and function pointers;
+* generic data structures;
+* circular buffers and queues;
+* event-driven state machines;
+* sensor-data acquisition;
+* digital signal processing;
+* fixed-point arithmetic;
+* communication protocol parsing;
+* UART, SPI, and I²C software interfaces;
+* real-time data pipelines;
+* multithreading and synchronization;
+* C11 atomic operations;
+* deterministic memory allocation;
+* hardware abstraction;
+* error handling and fault recovery;
+* static and dynamic analysis;
+* unit, integration, stress, and regression testing;
+* performance benchmarking;
+* continuous integration.
+
+## Folder Structure
+
+```text
+01-c-programming-projects/
+│
+├── 01-modular-data-processing-engine/
+│   ├── include/
+│   ├── src/
+│   ├── tests/
+│   ├── data/
+│   ├── CMakeLists.txt
+│   └── README.md
+│
+├── 02-generic-data-structure-library/
+│   ├── include/
+│   ├── src/
+│   ├── tests/
+│   ├── benchmarks/
+│   ├── CMakeLists.txt
+│   └── README.md
+│
+├── 03-event-driven-state-machine/
+│   ├── include/
+│   ├── src/
+│   ├── tests/
+│   ├── examples/
+│   └── README.md
+│
+├── 04-thread-safe-circular-buffer/
+│   ├── include/
+│   ├── src/
+│   ├── tests/
+│   ├── benchmarks/
+│   └── README.md
+│
+├── 05-sensor-acquisition-and-signal-processing/
+│   ├── include/
+│   ├── src/
+│   ├── tests/
+│   ├── data/
+│   └── README.md
+│
+├── 06-embedded-communication-framework/
+│   ├── include/
+│   ├── src/
+│   ├── drivers/
+│   ├── tests/
+│   └── README.md
+│
+├── 07-fixed-point-dsp-library/
+│   ├── include/
+│   ├── src/
+│   ├── tests/
+│   ├── reference/
+│   ├── benchmarks/
+│   └── README.md
+│
+├── 08-real-time-task-scheduler/
+│   ├── include/
+│   ├── src/
+│   ├── tests/
+│   ├── platform/
+│   └── README.md
+│
+├── 09-deterministic-memory-pool/
+│   ├── include/
+│   ├── src/
+│   ├── tests/
+│   ├── benchmarks/
+│   └── README.md
+│
+├── 10-multithreaded-data-pipeline/
+│   ├── include/
+│   ├── src/
+│   ├── tests/
+│   ├── benchmarks/
+│   └── README.md
+│
+├── 11-binary-protocol-parser/
+│   ├── include/
+│   ├── src/
+│   ├── tests/
+│   ├── fuzz/
+│   └── README.md
+│
+├── 12-lock-free-spsc-queue/
+│   ├── include/
+│   ├── src/
+│   ├── tests/
+│   ├── benchmarks/
+│   └── README.md
+│
+├── common/
+│   ├── include/
+│   └── src/
+│
+├── docs/
+│   ├── architecture/
+│   ├── coding-guidelines/
+│   └── verification/
+│
+├── .github/
+│   └── workflows/
+│
+├── CMakeLists.txt
+└── README.md
+```
+
+The structure may be updated as new projects are implemented.
+
+# Current Projects
+
+## 1. Modular Data-Processing Engine
+
+This project implements a configurable processing pipeline for reading input data, validating samples, applying processing operations, calculating statistics, detecting invalid conditions, and storing results.
+
+The software is divided into independent modules for:
+
+* input acquisition;
+* data validation;
+* preprocessing;
+* numerical processing;
+* statistical analysis;
+* threshold checking;
+* error reporting;
+* file output;
+* runtime configuration.
+
+### Processing Flow
+
+```text
+Input Data
+    |
+    v
+Validation
+    |
+    v
+Preprocessing
+    |
+    v
+Numerical Processing
+    |
+    v
+Threshold and Fault Analysis
+    |
+    v
+Result Storage
+```
+
+### Technical Concepts
+
+* modular source-code organization;
+* public and private interfaces;
+* configuration structures;
+* callback-based processing;
+* reusable processing stages;
+* structured error handling;
+* deterministic resource cleanup;
+* file and data parsing;
+* unit-testable modules.
+
+## 2. Generic Data-Structure Library
+
+This project implements reusable C data structures that can store application-specific data.
+
+The library may contain:
+
+* linked lists;
+* stacks;
+* queues;
+* double-ended queues;
+* circular buffers;
+* hash tables;
+* priority queues;
+* binary trees.
+
+The interfaces may use opaque structures, `void *` data pointers, comparison callbacks, destructor callbacks, and configurable memory allocation.
+
+### Example Interface
+
+```c
+typedef int (*CompareFunction)(
+    const void *left,
+    const void *right
+);
+
+typedef void (*DestroyFunction)(
+    void *data
+);
+
+typedef struct DataStructure DataStructure;
+
+DataStructure *data_structure_create(
+    CompareFunction compare,
+    DestroyFunction destroy
+);
+
+int data_structure_insert(
+    DataStructure *structure,
+    void *data
+);
+
+void data_structure_destroy(
+    DataStructure *structure
+);
+```
+
+### Technical Concepts
+
+* generic programming in C;
+* opaque structures;
+* encapsulation;
+* function pointers;
+* memory ownership;
+* reusable APIs;
+* iterator-style access;
+* algorithmic complexity;
+* configurable data handling.
+
+## 3. Event-Driven State Machine
+
+This project implements an event-driven state machine for embedded systems, communication protocols, control applications, and fault-management software.
+
+The implementation separates:
+
+* system states;
+* input events;
+* transition rules;
+* state-entry actions;
+* state-exit actions;
+* timeout processing;
+* fault conditions;
+* recovery procedures.
+
+### Example States
+
+```c
+typedef enum
+{
+    SYSTEM_STATE_RESET,
+    SYSTEM_STATE_INITIALIZING,
+    SYSTEM_STATE_IDLE,
+    SYSTEM_STATE_ACTIVE,
+    SYSTEM_STATE_RECOVERY,
+    SYSTEM_STATE_FAULT
+} SystemState;
+```
+
+### Example Events
+
+```c
+typedef enum
+{
+    SYSTEM_EVENT_START,
+    SYSTEM_EVENT_STOP,
+    SYSTEM_EVENT_DATA_READY,
+    SYSTEM_EVENT_TIMEOUT,
+    SYSTEM_EVENT_ERROR,
+    SYSTEM_EVENT_RESET
+} SystemEvent;
+```
+
+### Technical Concepts
+
+* transition-table design;
+* function-pointer-based handlers;
+* timeout management;
+* invalid-transition detection;
+* event queues;
+* fault-state handling;
+* deterministic state changes;
+* testable control logic.
+
+## 4. Thread-Safe Circular Buffer
+
+This project implements a reusable circular buffer for transferring streaming data between software modules.
+
+Possible applications include:
+
+* UART receive and transmit buffering;
+* ADC sample storage;
+* DSP input buffering;
+* audio-data streaming;
+* network-packet buffering;
+* sensor-data acquisition;
+* communication between threads.
+
+The implementation may support:
+
+* fixed-size storage;
+* configurable element size;
+* read and write operations;
+* full and empty detection;
+* index wraparound;
+* overwrite or reject policies;
+* dropped-data counters;
+* mutex-protected access;
+* atomic index handling;
+* performance benchmarking.
+
+### Technical Concepts
+
+* producer-consumer communication;
+* ring-buffer indexing;
+* buffer-overflow handling;
+* thread safety;
+* atomic operations;
+* deterministic memory usage;
+* data-stream management;
+* latency and throughput measurement.
+
+## 5. Sensor Acquisition and Signal Processing
+
+This project implements a complete data-acquisition and processing pipeline for simulated or recorded sensor samples.
+
+### Processing Flow
+
+```text
+Sample Input
+    |
+    v
+Range Validation
+    |
+    v
+Offset Correction
+    |
+    v
+Filtering
+    |
+    v
+Feature Extraction
+    |
+    v
+Threshold Detection
+    |
+    v
+Status Reporting
+```
+
+### Processing Functions
+
+The project may include:
+
+* sample-range validation;
+* offset correction;
+* moving-average filtering;
+* FIR filtering;
+* RMS calculation;
+* peak detection;
+* minimum and maximum tracking;
+* threshold crossing detection;
+* fault detection;
+* sample-quality analysis;
+* result logging.
+
+### Technical Concepts
+
+* streaming signal processing;
+* stateful filters;
+* fixed-size sample buffers;
+* numerical accuracy;
+* runtime configuration;
+* threshold-based decision logic;
+* reusable DSP functions;
+* test-data comparison.
+
+## 6. Embedded Communication Framework
+
+This project implements a structured communication framework for embedded software.
+
+The framework may provide support for:
+
+* UART communication;
+* SPI communication;
+* I²C communication;
+* transmit and receive queues;
+* message framing;
+* checksum and CRC verification;
+* communication timeouts;
+* event callbacks;
+* protocol state management;
+* communication fault reporting.
+
+### Software Layers
+
+```text
+Application Layer
+       |
+       v
+Protocol Layer
+       |
+       v
+Communication Service
+       |
+       v
+Hardware Abstraction Layer
+       |
+       v
+Device Driver
+```
+
+### Technical Concepts
+
+* layered firmware architecture;
+* hardware-independent protocol logic;
+* driver interfaces;
+* callback-based notification;
+* message framing;
+* checksum verification;
+* timeout handling;
+* queue management;
+* communication recovery.
+
+# Planned Projects
+
+## 7. Fixed-Point DSP Library
+
+This project will implement reusable signal-processing algorithms using fixed-point arithmetic.
+
+The library may contain:
+
+* Q15 arithmetic;
+* Q31 arithmetic;
+* saturating addition and subtraction;
+* fixed-point multiplication;
+* rounding and scaling;
+* FIR filters;
+* IIR filters;
+* FFT processing;
+* complex-number operations;
+* magnitude and power calculations;
+* automatic gain scaling.
+
+### Q15 Representation
+
+A floating-point value can be converted to a signed Q15 integer using:
+
+[
+x_{\text{Q15}} =
+\operatorname{round}\left(x \times 2^{15}\right)
+]
+
+The approximate floating-point value is recovered using:
+
+[
+x \approx
+\frac{x_{\text{Q15}}}{2^{15}}
+]
+
+### Example Saturating Addition
+
+```c
+#include <stdint.h>
+#include <limits.h>
+
+int16_t q15_add_saturate(
+    int16_t left,
+    int16_t right
+)
+{
+    int32_t result =
+        (int32_t)left + (int32_t)right;
+
+    if (result > INT16_MAX)
+    {
+        return INT16_MAX;
+    }
+
+    if (result < INT16_MIN)
+    {
+        return INT16_MIN;
+    }
+
+    return (int16_t)result;
+}
+```
+
+### Technical Focus
+
+* quantization-noise analysis;
+* overflow protection;
+* saturation arithmetic;
+* coefficient scaling;
+* bit-accurate verification;
+* floating-point reference comparison;
+* signal-to-quantization-noise ratio;
+* execution-cycle measurement;
+* memory optimization;
+* processor-specific optimization.
+
+## 8. Real-Time Task Scheduler
+
+This project will implement a lightweight scheduler for periodic and event-driven tasks.
+
+The scheduler may support:
+
+* periodic tasks;
+* one-shot tasks;
+* task priorities;
+* task enable and disable operations;
+* release-time tracking;
+* deadline monitoring;
+* missed-deadline detection;
+* execution counters;
+* runtime statistics;
+* timer rollover handling.
+
+### Example Task Definition
+
+```c
+typedef void (*TaskFunction)(
+    void *context
+);
+
+typedef struct
+{
+    TaskFunction function;
+    void *context;
+    uint32_t period_ticks;
+    uint32_t next_release_tick;
+    uint32_t execution_count;
+    uint8_t priority;
+    uint8_t enabled;
+} ScheduledTask;
+```
+
+### Technical Focus
+
+* deterministic task dispatch;
+* execution-budget monitoring;
+* deadline analysis;
+* timer overflow handling;
+* priority management;
+* scheduling jitter;
+* worst-case execution-time measurement;
+* testable time abstraction.
+
+## 9. Deterministic Memory Pool
+
+This project will implement a custom memory allocator using preallocated memory pools.
+
+The allocator may support:
+
+* fixed-size memory blocks;
+* multiple block sizes;
+* free-list management;
+* alignment handling;
+* allocation statistics;
+* double-free detection;
+* corruption guards;
+* configurable thread safety;
+* allocation-failure reporting.
+
+### Technical Focus
+
+* deterministic allocation time;
+* heap-fragmentation avoidance;
+* predictable memory usage;
+* block-alignment handling;
+* memory-ownership tracking;
+* corruption detection;
+* allocation-latency benchmarking;
+* platform-independent interfaces.
+
+## 10. Multithreaded Data Pipeline
+
+This project will implement a producer-consumer processing pipeline using POSIX threads or a portable threading abstraction.
+
+### Example Architecture
+
+```text
+Input Thread
+    |
+    v
+Acquisition Queue
+    |
+    v
+Processing Thread
+    |
+    v
+Result Queue
+    |
+    v
+Logging Thread
+```
+
+### Main Components
+
+* worker threads;
+* thread-safe queues;
+* mutexes;
+* condition variables;
+* atomic control flags;
+* bounded buffers;
+* graceful shutdown;
+* thread error propagation;
+* runtime performance measurement.
+
+### Technical Focus
+
+* race-condition prevention;
+* deadlock avoidance;
+* queue backpressure;
+* synchronization overhead;
+* thread lifecycle management;
+* shutdown coordination;
+* throughput measurement;
+* end-to-end latency measurement.
+
+## 11. Binary Communication Protocol Parser
+
+This project will implement a parser for a framed binary communication protocol.
+
+### Example Frame
+
+```text
++------------+--------+------+---------+----------+
+| Start Byte | Length | Type | Payload | CRC      |
++------------+--------+------+---------+----------+
+```
+
+The parser will accept one byte at a time and retain its internal state between calls.
+
+### Parser States
+
+* waiting for synchronization;
+* reading the header;
+* validating the length;
+* receiving the payload;
+* reading the CRC;
+* validating the frame;
+* recovering from malformed input.
+
+### Technical Focus
+
+* streaming byte processing;
+* partial-frame handling;
+* malformed-frame recovery;
+* CRC validation;
+* resynchronization;
+* buffer-boundary protection;
+* protocol version handling;
+* fuzz testing;
+* hostile-input validation.
+
+## 12. Lock-Free SPSC Queue
+
+This project will implement a lock-free single-producer, single-consumer queue using C11 atomic operations.
+
+Possible applications include:
+
+* interrupt-to-main-loop communication;
+* inter-thread data transfer;
+* DSP sample buffering;
+* real-time logging;
+* communication event queues.
+
+### Technical Focus
+
+* atomic load and store operations;
+* memory ordering;
+* cache coherency;
+* false-sharing prevention;
+* index wraparound;
+* lock-free correctness;
+* stress testing;
+* throughput comparison;
+* latency comparison with mutex-based queues.
+
+## 13. Embedded Logging Framework
+
+This project will implement a configurable logging and diagnostics framework for embedded and real-time software.
+
+The framework may support:
+
+* debug, information, warning, and error levels;
+* compile-time log filtering;
+* runtime log filtering;
+* binary and text output;
+* timestamps;
+* ring-buffer storage;
+* asynchronous transmission;
+* dropped-message counters;
+* module-specific logging;
+* fault-context storage.
+
+### Technical Focus
+
+* low-overhead diagnostics;
+* runtime observability;
+* asynchronous logging;
+* memory-aware formatting;
+* compile-time configuration;
+* thread-safe logging;
+* diagnostic data retention.
+
+## 14. Portable Hardware Abstraction Layer
+
+This project will implement common hardware interfaces without directly coupling application logic to a specific device.
+
+The abstraction may include:
+
+* GPIO;
+* timers;
+* UART;
+* SPI;
+* I²C;
+* system time;
+* interrupts;
+* nonvolatile memory.
+
+### Example Interface
+
+```c
+typedef struct
+{
+    int (*initialize)(void);
+
+    int (*write)(
+        const uint8_t *data,
+        size_t length
+    );
+
+    int (*read)(
+        uint8_t *data,
+        size_t length
+    );
+
+    int (*shutdown)(void);
+} CommunicationInterface;
+```
+
+### Technical Focus
+
+* platform portability;
+* dependency inversion;
+* mock interfaces;
+* host-based testing;
+* driver replacement;
+* compile-time platform selection;
+* interface versioning.
+
+## 15. Fault-Tolerant Embedded Controller
+
+This project will integrate several modules into a complete embedded controller.
+
+The controller may include:
+
+* hardware abstraction;
+* task scheduling;
+* sensor acquisition;
+* digital filtering;
+* state-machine control;
+* communication services;
+* logging;
+* watchdog supervision;
+* fault detection;
+* recovery procedures.
+
+### Fault Conditions
+
+The controller may detect and handle:
+
+* sensor timeout;
+* communication failure;
+* invalid state transitions;
+* data corruption;
+* memory-pool exhaustion;
+* task deadline violations;
+* buffer overflow;
+* watchdog reset;
+* invalid configuration.
+
+### Technical Focus
+
+* safe-state transitions;
+* degraded operating modes;
+* watchdog integration;
+* fault containment;
+* system recovery;
+* diagnostic storage;
+* system-level verification;
+* fault-injection testing.
+
+# Software Architecture
+
+Each larger project should use a clear layered architecture.
+
+```text
+Application
+    |
+    v
+Service Layer
+    |
+    v
+Algorithm or Protocol Layer
+    |
+    v
+Platform Abstraction
+    |
+    v
+Operating System or Hardware
+```
+
+A typical project may use the following organization:
+
+```text
+project-name/
+│
+├── include/
+│   ├── project_api.h
+│   └── project_types.h
+│
+├── src/
+│   ├── project_api.c
+│   ├── internal_module.c
+│   └── internal_module.h
+│
+├── tests/
+│   ├── test_main.c
+│   ├── test_project_api.c
+│   └── test_internal_module.c
+│
+├── examples/
+│   └── example_application.c
+│
+├── benchmarks/
+│   └── benchmark_main.c
+│
+├── docs/
+│   └── architecture.md
+│
+├── CMakeLists.txt
+└── README.md
+```
+
+## Public Interfaces
+
+Public header files should expose only the information required by other modules.
+
+Internal data should remain inside source files or private header files.
+
+```c
+typedef struct CircularBuffer CircularBuffer;
+
+CircularBuffer *circular_buffer_create(
+    size_t capacity,
+    size_t element_size
+);
+
+int circular_buffer_write(
+    CircularBuffer *buffer,
+    const void *element
+);
+
+int circular_buffer_read(
+    CircularBuffer *buffer,
+    void *element
+);
+
+void circular_buffer_destroy(
+    CircularBuffer *buffer
+);
+```
+
+This design allows the implementation to change without modifying the public interface.
+
+## Error Handling
+
+Functions that may fail should return explicit status values.
+
+```c
+typedef enum
+{
+    STATUS_OK = 0,
+    STATUS_INVALID_ARGUMENT,
+    STATUS_OUT_OF_MEMORY,
+    STATUS_BUFFER_FULL,
+    STATUS_BUFFER_EMPTY,
+    STATUS_TIMEOUT,
+    STATUS_DATA_CORRUPTION,
+    STATUS_NOT_INITIALIZED,
+    STATUS_INTERNAL_ERROR
+} StatusCode;
+```
+
+Example function:
+
+```c
+StatusCode process_samples(
+    const int16_t *samples,
+    size_t sample_count,
+    ProcessingResult *result
+);
+```
+
+The caller should verify the returned value before using the output.
+
+## Memory Ownership
+
+Each interface should clearly define:
+
+* which module allocates the memory;
+* which module owns the memory;
+* which module may modify the data;
+* which function releases the memory;
+* whether a pointer may be retained;
+* whether null pointers are accepted;
+* how buffer sizes are specified;
+* whether data is copied or referenced.
+
+Clear ownership rules reduce:
+
+* memory leaks;
+* double-free errors;
+* use-after-free errors;
+* invalid pointer access;
+* unexpected data modification.
+
+# Coding Guidelines
+
+The projects follow these general practices:
+
+* use meaningful names;
+* keep functions focused;
+* separate module responsibilities;
+* avoid hidden side effects;
+* validate public-function arguments;
+* use `const` where data should not be modified;
+* use fixed-width integer types when binary size matters;
+* check numeric conversions;
+* avoid unnecessary global variables;
+* avoid unnecessary dynamic allocation;
+* check all return values;
+* release resources on every failure path;
+* isolate platform-specific code;
+* document assumptions and limitations;
+* compile without warnings.
+
+## Fixed-Width Integer Types
+
+Projects involving embedded systems, DSP, or protocol data should use `<stdint.h>`.
+
+```c
+#include <stdint.h>
+
+uint8_t message_type;
+int16_t sensor_sample;
+uint32_t timestamp_ticks;
+int64_t accumulated_energy;
+```
+
+## Buffer Length Handling
+
+Functions that write to a buffer should receive the available capacity explicitly.
+
+```c
+StatusCode encode_message(
+    const Message *message,
+    uint8_t *output_buffer,
+    size_t output_capacity,
+    size_t *encoded_length
+);
+```
+
+The function must validate the capacity before writing data.
+
+# Build Instructions
+
+Projects may use GCC, Clang, Make, or CMake.
+
+## GCC Build
+
+```bash
+gcc \
+    -std=c11 \
+    -Wall \
+    -Wextra \
+    -Wpedantic \
+    -Wconversion \
+    -Wshadow \
+    -Wformat=2 \
+    -Wundef \
+    -Wstrict-prototypes \
+    -Wmissing-prototypes \
+    src/main.c \
+    src/module.c \
+    -Iinclude \
+    -o application
+```
+
+## Debug Build
+
+```bash
+gcc \
+    -std=c11 \
+    -Wall \
+    -Wextra \
+    -Wpedantic \
+    -g3 \
+    -O0 \
+    src/main.c \
+    src/module.c \
+    -Iinclude \
+    -o application
+```
+
+## Optimized Build
+
+```bash
+gcc \
+    -std=c11 \
+    -Wall \
+    -Wextra \
+    -Wpedantic \
+    -O2 \
+    -DNDEBUG \
+    src/main.c \
+    src/module.c \
+    -Iinclude \
+    -o application
+```
+
+## Sanitizer Build
+
+```bash
+gcc \
+    -std=c11 \
+    -Wall \
+    -Wextra \
+    -Wpedantic \
+    -fsanitize=address,undefined \
+    -fno-omit-frame-pointer \
+    -g \
+    src/main.c \
+    src/module.c \
+    -Iinclude \
+    -o application_sanitized
+```
+
+Run the program:
+
+```bash
+./application_sanitized
+```
+
+## CMake Build
+
+```bash
+cmake -S . -B build
+cmake --build build
+```
+
+Run tests:
+
+```bash
+ctest --test-dir build --output-on-failure
+```
+
+# Testing Strategy
+
+Each project should include more than a single demonstration run.
+
+Testing may include:
+
+* unit testing;
+* integration testing;
+* boundary-value testing;
+* invalid-input testing;
+* error-path testing;
+* memory-leak detection;
+* concurrency stress testing;
+* performance benchmarking;
+* regression testing;
+* fuzz testing.
+
+## Normal-Operation Tests
+
+Examples include:
+
+* valid configuration;
+* expected sample range;
+* normal buffer operation;
+* valid protocol frames;
+* correct state transitions;
+* expected filter output.
+
+## Boundary Tests
+
+Examples include:
+
+* zero-length input;
+* one-element input;
+* maximum supported length;
+* full buffer;
+* empty buffer;
+* maximum counter value;
+* timer wraparound;
+* minimum and maximum numeric values.
+
+## Invalid-Input Tests
+
+Examples include:
+
+* null pointers;
+* invalid enumeration values;
+* malformed files;
+* corrupted protocol frames;
+* invalid buffer sizes;
+* unsupported configuration values;
+* invalid state-machine events.
+
+## Resource-Failure Tests
+
+Examples include:
+
+* memory-allocation failure;
+* unavailable files;
+* communication timeout;
+* queue overflow;
+* simulated hardware failure;
+* worker-thread creation failure.
+
+## Concurrency Tests
+
+Examples include:
+
+* repeated producer-consumer operation;
+* shutdown during active processing;
+* queue saturation;
+* simultaneous reads and writes;
+* long-duration stress testing.
+
+# Static Analysis
+
+Static-analysis tools may be used to identify problems before runtime.
+
+Example:
+
+```bash
+cppcheck \
+    --enable=all \
+    --std=c11 \
+    --suppress=missingIncludeSystem \
+    include src tests
+```
+
+Static analysis can help detect:
+
+* uninitialized variables;
+* invalid pointer usage;
+* suspicious conditions;
+* unreachable code;
+* unsafe type conversions;
+* unchecked return values;
+* resource leaks;
+* incorrect conditions.
+
+# Dynamic Analysis
+
+Valgrind may be used on supported systems.
+
+```bash
+valgrind \
+    --leak-check=full \
+    --show-leak-kinds=all \
+    --track-origins=yes \
+    ./application
+```
+
+Dynamic analysis can identify:
+
+* memory leaks;
+* invalid reads;
+* invalid writes;
+* uninitialized memory;
+* use-after-free errors;
+* incorrect memory release.
+
+# Performance Evaluation
+
+Projects involving real-time processing, communication, queues, memory allocation, or DSP should include measurable results.
+
+Possible measurements include:
+
+* average execution time;
+* maximum observed execution time;
+* processing throughput;
+* queue latency;
+* allocation latency;
+* memory usage;
+* stack usage;
+* heap usage;
+* dropped-message count;
+* dropped-sample count;
+* CPU utilization.
+
+### Example Output
+
+```text
+Samples processed:          1,000,000
+Average processing time:    2.4 us/sample
+Maximum processing time:    4.9 us/sample
+Memory usage:               18.2 KB
+Dropped samples:            0
+Processing failures:        0
+```
+
+Performance reports should identify:
+
+* processor or test platform;
+* operating system;
+* compiler;
+* compiler version;
+* optimization setting;
+* input size;
+* number of iterations;
+* measurement method.
+
+# Continuous Integration
+
+GitHub Actions may be used to automate:
+
+* GCC builds;
+* Clang builds;
+* debug builds;
+* optimized builds;
+* sanitizer tests;
+* unit tests;
+* static analysis;
+* formatting checks;
+* code-coverage generation.
+
+A possible workflow may include:
+
+```text
+GCC Debug Build
+GCC Optimized Build
+Clang Debug Build
+Sanitizer Build
+Static Analysis
+Unit Tests
+```
+
+# Documentation Requirements
+
+Each project README should include:
+
+* project overview;
+* engineering objective;
+* architecture;
+* module descriptions;
+* algorithm description;
+* interface description;
+* build instructions;
+* execution instructions;
+* test procedure;
+* example output;
+* performance results;
+* limitations;
+* planned improvements.
+
+Larger projects should also contain:
+
+* architecture diagrams;
+* data-flow diagrams;
+* state diagrams;
+* API documentation;
+* verification results;
+* benchmark results.
+
+# Skills Demonstrated
+
+This project collection demonstrates experience with:
+
+* C11 programming;
+* modular software architecture;
+* embedded C;
+* systems programming;
+* firmware-oriented development;
+* reusable data structures;
+* pointer handling;
+* memory ownership;
+* opaque interfaces;
+* callback functions;
+* state machines;
+* communication protocols;
+* sensor-data processing;
+* DSP implementation;
+* fixed-point arithmetic;
+* multithreading;
+* synchronization;
+* atomic operations;
+* lock-free design;
+* deterministic memory allocation;
+* hardware abstraction;
+* fault management;
+* software testing;
+* static analysis;
+* dynamic analysis;
+* performance profiling;
+* CMake;
+* Make;
+* Git;
+* continuous integration.
+
+# Relevance to Engineering Roles
+
+The projects are relevant to positions such as:
+
+* Wireless DSP Firmware Engineer;
+* Embedded Software Engineer;
+* Firmware Engineer;
+* PHY Firmware Engineer;
+* DSP Software Engineer;
+* Real-Time Software Engineer;
+* Systems Software Engineer;
+* Communication Software Engineer;
+* Baseband Software Engineer;
+* Embedded Linux Software Engineer;
+* Test and Verification Engineer.
+
+The project collection demonstrates C programming for applications that process data, interact with hardware, operate under resource constraints, and require reliable runtime behaviour.
+
+# Development Roadmap
+
+| Phase   | Project                                  | Status         |
+| ------- | ---------------------------------------- | -------------- |
+| Phase 1 | Modular data-processing engine           | Planned        |
+| Phase 1 | Generic data-structure library           | Current        |
+| Phase 1 | Event-driven state machine               | Planned       |
+| Phase 1 | Thread-safe circular buffer              | Planned      |
+| Phase 1 | Sensor acquisition and signal processing | Planned        |
+| Phase 2 | Embedded communication framework         |Planned |
+| Phase 3 | Fixed-point DSP library                  | Planned        |
+| Phase 3 | Real-time task scheduler                 | Planned        |
+| Phase 3 | Deterministic memory pool                | Planned        |
+| Phase 3 | Multithreaded data pipeline              | Planned        |
+| Phase 3 | Binary protocol parser                   | Planned        |
+| Phase 3 | Lock-free SPSC queue                     | Planned        |
+| Phase 4 | Embedded logging framework               | Planned        |
+| Phase 4 | Portable hardware abstraction layer      | Planned        |
+| Phase 4 | Fault-tolerant embedded controller       | Planned        |
+
+# Development Status
+
+This folder is under active development.
+
+The current work focuses on modular C applications, reusable software components, embedded processing, data structures, signal-processing pipelines, state machines, communication software, testing, debugging, and performance analysis.
+
+The planned work will extend the collection with fixed-point DSP, real-time scheduling, deterministic memory allocation, multithreaded processing, protocol parsing, atomic operations, hardware abstraction, fault recovery, automated testing, and performance optimization.
+
+# Author
+
+**Md Moklesur Rahman**
+
+Wireless Communication, RF Systems, Embedded Software, DSP, and Physical-Layer Engineering
+Oulu, Finland
