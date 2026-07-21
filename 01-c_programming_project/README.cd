@@ -2,10 +2,41 @@
 
 This folder contains focused C projects covering modular software design, data structures, embedded systems, signal processing, communication protocols, memory management, concurrency, real-time processing, software testing, and performance analysis.
 
-The current projects focus on practical C implementations with structured architecture, reusable modules, defensive programming, clear memory ownership, build automation, testing, and debugging.
-
 The planned projects extend the collection toward real-time firmware, fixed-point DSP, lock-free data structures, protocol development, deterministic memory management, hardware abstraction, fault handling, and production-oriented verification.
 
+## Projects
+
+### [`fixed_point_dsp_toolkit`](fixed_point_dsp_toolkit/)
+Q15 fixed-point arithmetic with saturation and round-to-nearest renormalization, a no-malloc ring buffer, an O(1) streaming moving-average filter, and RMS measurement with an integer Newton square root. Verified: the demo chain filters a noisy sine and recovers the clean-signal RMS theory value (0.2828) to within 0.0002, entirely in fixed point; three test suites pin saturation-vs-wrap, rounding-vs-truncation (0.5 × 0.5 must equal 0.25 exactly), buffer wrap-around integrity, and RMS against closed-form waveform references.
+
+### [`embedded_key-value_store_with_wear_leveling_and_power-fail_safety`](embedded_key-value_store_with_wear_leveling_and_power-fail_safety/)
+A log-structured key-value store on an emulated NOR flash that enforces real device physics (programs can only clear bits; the emulator ANDs writes in). Commit-point write ordering, two-page wear-leveled compaction with sequence-number mount election, and torn-write recovery. Verified by fault injection at three distinct power-cut points — mid-content, before the commit byte, and between new-record commit and old-record kill — with the committed value surviving remount in every case; wear leveling proven by erase counters differing by at most one after 500 updates.
+
+### [`embedded_packet_protocol`](embedded_packet_protocol/)
+COBS framing with CRC-16-CCITT and a byte-wise resynchronizing stream parser for UART-class links. Verified against external references — the published COBS test vectors and the standard CRC check value 0x29B1 — plus an exhaustive single-bit-flip sweep over a whole frame (zero corrupted frames accepted) and fifty rounds of interleaved garbage and truncated fragments with full frame-lock recovery.
+
+### [`embedded_PID_controller_with_anti-windup`](embedded_PID_controller_with_anti-windup/)
+A discrete PID controller with the three refinements production firmware needs: actuator output clamping, conditional-integration anti-windup, and derivative on measurement. Verified in closed loop against a simulated first-order plant, including a closed-form check (P-only steady state lands on Kp·K/(1+Kp·K) = 2/3 exactly), a windup A/B comparison where an unfrozen integral demonstrably diverges while the controller's stays bounded, and a bit-identical no-setpoint-kick proof.
+
+### [`embedded_cooperative_task_scheduler`](embedded_cooperative_task_scheduler/)
+A tick-driven cooperative scheduler: interrupt-minimal tick, registration-order priority, phase offsets that stagger same-period tasks, and honest overrun accounting — a late task runs once and its missed activations are counted, not replayed. Verified: exact activation counts over 1000 ticks (100 and 40 runs for periods 10 and 25), stagger and priority observed through a sequence log, and the catch-up arithmetic exact (1 run + 9 overruns = the 10 activations an ideal loop would have delivered). The project README documents a design bug that the test suite caught in the first implementation.
+
+### [`RF_cascade_analysis_tool`](RF_cascade_analysis_tool/)
+System-level receiver budget analysis: cascade gain, Friis noise figure, output/input IP3 combination, sensitivity from the −174 dBm/Hz thermal floor, and spurious-free dynamic range. Every expected test value is hand-derivable and derived in the test comments (textbook two-stage Friis 3.953 dB, attenuator NF-equals-loss identity, two-stage IP3 combination 19.586 dBm, sensitivity −99.000 dBm exactly). The demo budget of a four-stage front end reproduces both classic rules: noise dominated by the LNA, linearity dominated by the final amplifier.
+
+## Building
+
+Each project directory is self-contained:
+
+```bash
+cd <project>
+make test      # build and run the unit tests
+make           # build everything the project provides
+make clean
+```
+No external dependencies; a C99 compiler and make are sufficient.
+
+```
 ## Objectives
 
 The main objectives of this folder are to:
@@ -51,118 +82,11 @@ The projects cover the following areas:
 * unit, integration, stress, and regression testing;
 * performance benchmarking;
 * continuous integration.
-
-## Folder Structure
-
-```text
-01-c-programming-projects/
-│
-├── 01-modular-data-processing-engine/
-│   ├── include/
-│   ├── src/
-│   ├── tests/
-│   ├── data/
-│   ├── CMakeLists.txt
-│   └── README.md
-│
-├── 02-generic-data-structure-library/
-│   ├── include/
-│   ├── src/
-│   ├── tests/
-│   ├── benchmarks/
-│   ├── CMakeLists.txt
-│   └── README.md
-│
-├── 03-event-driven-state-machine/
-│   ├── include/
-│   ├── src/
-│   ├── tests/
-│   ├── examples/
-│   └── README.md
-│
-├── 04-thread-safe-circular-buffer/
-│   ├── include/
-│   ├── src/
-│   ├── tests/
-│   ├── benchmarks/
-│   └── README.md
-│
-├── 05-sensor-acquisition-and-signal-processing/
-│   ├── include/
-│   ├── src/
-│   ├── tests/
-│   ├── data/
-│   └── README.md
-│
-├── 06-embedded-communication-framework/
-│   ├── include/
-│   ├── src/
-│   ├── drivers/
-│   ├── tests/
-│   └── README.md
-│
-├── 07-fixed-point-dsp-library/
-│   ├── include/
-│   ├── src/
-│   ├── tests/
-│   ├── reference/
-│   ├── benchmarks/
-│   └── README.md
-│
-├── 08-real-time-task-scheduler/
-│   ├── include/
-│   ├── src/
-│   ├── tests/
-│   ├── platform/
-│   └── README.md
-│
-├── 09-deterministic-memory-pool/
-│   ├── include/
-│   ├── src/
-│   ├── tests/
-│   ├── benchmarks/
-│   └── README.md
-│
-├── 10-multithreaded-data-pipeline/
-│   ├── include/
-│   ├── src/
-│   ├── tests/
-│   ├── benchmarks/
-│   └── README.md
-│
-├── 11-binary-protocol-parser/
-│   ├── include/
-│   ├── src/
-│   ├── tests/
-│   ├── fuzz/
-│   └── README.md
-│
-├── 12-lock-free-spsc-queue/
-│   ├── include/
-│   ├── src/
-│   ├── tests/
-│   ├── benchmarks/
-│   └── README.md
-│
-├── common/
-│   ├── include/
-│   └── src/
-│
-├── docs/
-│   ├── architecture/
-│   ├── coding-guidelines/
-│   └── verification/
-│
-├── .github/
-│   └── workflows/
-│
-├── CMakeLists.txt
-└── README.md
-```
+Six verified C99 projects covering the core building blocks of embedded and RF firmware: signal processing, storage, communication, control, scheduling, and system-level RF analysis. Every project contains its own unit tests and Makefile, builds with zero warnings under `gcc -std=c99 -Wall -Wextra -Wpedantic -O2`, and every result quoted below was produced by actually running the code.
 
 The structure may be updated as new projects are implemented.
 
-# Current Projects
+# Planned Projects
 
 ## 1. Modular Data-Processing Engine
 
