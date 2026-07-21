@@ -1,0 +1,84 @@
+# RF Cascade Analysis Tool
+
+A C99 tool computing the system-level budget of a multi-stage RF receiver chain: cascade gain, Friis noise figure, third-order intercept combination, receiver sensitivity, and spurious-free dynamic range — verified against hand-calculated textbook values.
+
+## Overview
+
+Every receiver design starts with a cascade budget: given the gain, noise figure, and linearity of each stage from a datasheet, what does the chain achieve as a whole? Two classic asymmetries govern the answer. Noise is dominated by the front of the chain — the Friis formula divides each stage's excess noise by the gain preceding it, which is why receivers lead with a low-noise amplifier. Linearity is dominated by the back — each stage's intercept contribution is weighted by the gain that follows it, which is why linearity budgets concentrate on the final amplifier. This tool implements both accumulations plus the receiver-level consequences: minimum detectable signal and spurious-free dynamic range.
+
+All cascade mathematics runs in linear units and converts to decibels only at the interfaces — mixing scales inside the formulas is the classic source of cascade-spreadsheet errors.
+
+## Project structure
+
+```
+rf_cascade_analysis/
+├── include/
+│   └── rf_cascade.h         Stage model, cascade results, analysis interfaces
+├── src/
+│   ├── rf_cascade.c         Friis pass, suffix-gain IP3 pass, sensitivity, SFDR
+│   └── main.c               Demo: 4-stage front end (LNA, BPF, mixer, IF amp)
+├── tests/
+│   └── test_rf_cascade.c    Hand-checked textbook values, identities, validation
+└── Makefile
+```
+
+## Build and run
+
+```bash
+make          # build the demo and the test
+make test     # run the test suite
+./rf_budget   # print the cascade budget
+make clean
+```
+
+Builds with zero warnings under `gcc -std=c99 -Wall -Wextra -Wpedantic -O2`.
+
+## Verified results
+
+Demo chain (representative direct-conversion front end):
+
+```
+  stage     gain(dB)   NF(dB)   OIP3(dBm)
+  LNA          15.0      1.2       20.0
+  BPF          -2.0      2.0       50.0
+  Mixer        -7.0      7.5       15.0
+  IF amp       20.0      4.0       25.0
+
+  cascade gain  :   26.00 dB
+  cascade NF    :    2.90 dB
+  cascade OIP3  :   23.69 dBm
+  cascade IIP3  :   -2.31 dBm
+
+  sensitivity            : -101.10 dBm   (1 MHz channel, 10 dB SNR)
+  spurious-free DR       :   72.53 dB
+```
+
+The result illustrates both budget rules: the cascade noise figure of 2.90 dB stays close to the LNA's 1.2 dB despite 9 dB of loss and a 7.5 dB-NF mixer behind it, and the output intercept lands near the IF amplifier's own 25 dBm because earlier stages contribute through the gain that follows them.
+
+Test suite (all pass, exit code 0):
+
+```
+[test_rf_cascade] identity + friis + attenuator + ip3 + levels -> PASS
+```
+
+Every expected value in the tests is derivable by hand and stated in the test comments:
+
+1. **Single-stage identity** — a one-stage chain returns that stage's own figures exactly.
+2. **Textbook Friis** — G1 = 10 dB / NF1 = 2 dB followed by NF2 = 10 dB gives F = 1.58489 + 9/10 = 2.48489, i.e. 3.953 dB.
+3. **Matched attenuator** — a passive stage's cascade noise figure equals its loss (6 dB pad → 6.000 dB NF).
+4. **IP3 combination** — two identical stages (10 dB, 20 dBm) combine to 1/(1/1000 + 1/100) mW = 90.909 mW = 19.586 dBm at the output.
+5. **Level figures** — sensitivity −174 + 60 + 5 + 10 = −99.000 dBm exactly; SFDR reproduces the two-thirds rule on a hand-checked case (66.000 dB).
+
+## Technical notes
+
+The Friis accumulation and the intercept accumulation each walk the chain once. The intercept pass runs backward from the last stage, maintaining the suffix gain — the total gain following each stage — which is the weight that refers that stage's intercept to the chain output. Passive stages are entered with their physical identity NF = loss; the analysis does not assume it, so non-matched or noisy passive models can be entered freely. Argument validation returns status codes rather than asserting, keeping the module usable as a library.
+
+## Reference
+
+H. T. Friis, "Noise figures of radio receivers," Proceedings of the IRE, 1944.
+
+## Author
+
+**Md Moklesur Rahman**
+- GitHub: [dipucwc](https://github.com/dipucwc)
+- LinkedIn: [Md Moklesur Rahman](https://www.linkedin.com/in/md-moklesur-rahman-65a63962/)
