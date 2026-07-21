@@ -1,0 +1,83 @@
+# Monte Carlo Lottery Analysis
+
+A C++17 project that generates unbiased lottery draws (7 distinct numbers from 1 to 49) and statistically verifies the generator through a Monte Carlo chi-square uniformity test.
+
+## Overview
+
+Naive lottery generators typically contain two defects: `rand() % N` introduces modulo bias that favours small numbers, and rejection loops over a `std::set` have unbounded worst-case running time. This project replaces both with `std::sample`, which selects k elements without replacement and with equal probability for every subset, and then goes one step further: instead of assuming the generator is fair, it proves it.
+
+The verification runs 100,000 Monte Carlo draws, accumulates the frequency of every number, and computes the chi-square goodness-of-fit statistic against the uniform hypothesis. With 48 degrees of freedom (49 numbers minus one), a truly uniform generator stays below the 95th-percentile threshold of 65.17 in 95% of runs. The program reports the statistic and an automated verdict.
+
+## Project structure
+
+```
+monte_carlo_lottery_analysis/
+├── include/
+│   └── lottery.h            Interfaces, constants, chi-square threshold
+├── src/
+│   ├── lottery.cpp          Draw generation (std::sample) and uniformity analysis
+│   └── main.cpp             Demo: one draw + 100k-draw Monte Carlo verdict
+├── tests/
+│   └── test_lottery.cpp     Unit tests (framework-free, CI-usable exit codes)
+└── CMakeLists.txt           Static library + demo + ctest integration
+```
+
+## Build and run
+
+With CMake:
+
+```bash
+cmake -B build
+cmake --build build
+./build/lottery_demo
+ctest --test-dir build
+```
+
+Directly with g++:
+
+```bash
+g++ -std=c++17 -Wall -Wextra -Iinclude src/lottery.cpp src/main.cpp -o lottery_demo
+g++ -std=c++17 -Wall -Wextra -Iinclude src/lottery.cpp tests/test_lottery.cpp -o test_lottery
+./test_lottery && ./lottery_demo
+```
+
+Both build with zero warnings under `-Wall -Wextra` (GCC, C++17).
+
+## Verified results
+
+Example output of `lottery_demo`:
+
+```
+Your lottery numbers are: 11 15 22 35 39 40 49
+
+Monte Carlo uniformity check (100000 draws)
+  expected count per number : 14285.71
+  observed min / max        : 14110 / 14509
+  chi-square (48 dof)       : 33.50  (95% threshold 65.17)
+  verdict                   : UNIFORM at 95% confidence
+```
+
+Chi-square values observed across repeated runs: 33.50, 41.10, 39.81, 58.95 — all below the 65.17 threshold and varying run to run, which is exactly the behaviour of a healthy uniform generator. An occasional exceedance of the threshold is expected in roughly 1 of 20 runs by construction of the 95% quantile and is not a defect.
+
+## Unit tests
+
+The test program checks four properties and returns a nonzero exit code on any failure, making it directly usable in scripts and CI pipelines:
+
+1. **Draw validity** — 1,000 draws checked: every draw holds exactly 7 numbers, all within 1–49, all distinct, in ascending order.
+2. **Determinism** — two engines with the same fixed seed produce identical draw sequences, the basis for reproducible simulations.
+3. **Count conservation** — after N analysis draws, per-number counts sum to exactly N × 7.
+4. **Statistical verdict** — with a fixed seed and 100,000 draws, the chi-square statistic reproducibly falls below the 95% threshold.
+
+```
+[test_lottery] validity + determinism + conservation + chi-square -> PASS
+```
+
+## Design notes
+
+The draw generator takes the random engine by reference rather than owning it, so tests can inject fixed seeds while the demo uses hardware entropy. The analysis returns a plain value type (`FrequencyStats`) with no I/O inside the library, keeping the core testable and reusable. The tests avoid external frameworks on purpose: a small check macro is sufficient for the properties involved, and the project builds anywhere a C++17 compiler exists.
+
+## Author
+
+**Md Moklesur Rahman**
+- GitHub: [dipucwc](https://github.com/dipucwc)
+- LinkedIn: [Md Moklesur Rahman](https://www.linkedin.com/in/md-moklesur-rahman-65a63962/)
