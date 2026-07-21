@@ -1,6 +1,6 @@
 # Fixed-Point DSP Toolkit in C
 
-A C99 project implementing the core building blocks of an embedded signal-processing path — Q15 fixed-point arithmetic, a circular sample buffer, a streaming moving-average filter, and RMS power measurement — with unit tests for every module and a demonstration chain that filters a noisy sine and verifies the result against theory.
+A C99 project implementing the core building blocks of an embedded signal-processing path- Q15 fixed-point arithmetic, a circular sample buffer, a streaming moving-average filter, and RMS power measurement — with unit tests for every module and a demonstration chain that filters a noisy sine and verifies the result against theory.
 
 ## Overview
 
