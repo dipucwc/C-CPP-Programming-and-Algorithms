@@ -1,6 +1,6 @@
 # C Programming Projects
 
-This folder contains engineering-focused C projects covering modular software design, data structures, embedded systems, signal processing, communication protocols, memory management, concurrency, real-time processing, software testing, and performance analysis.
+This folder contains focused C projects covering modular software design, data structures, embedded systems, signal processing, communication protocols, memory management, concurrency, real-time processing, software testing, and performance analysis.
 
 The current projects focus on practical C implementations with structured architecture, reusable modules, defensive programming, clear memory ownership, build automation, testing, and debugging.
 
