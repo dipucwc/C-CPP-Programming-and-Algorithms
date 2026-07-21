@@ -1,0 +1,8 @@
+# Build artifacts
+test_*
+*.o
+
+# Editor and OS noise
+.vscode/
+.idea/
+.DS_Store
