@@ -1,0 +1,11 @@
+# Build artifacts
+dsp_demo
+test_q15
+test_ring_buffer
+test_dsp_filters
+*.o
+
+# Editor and OS noise
+.vscode/
+.idea/
+.DS_Store
