@@ -1,0 +1,45 @@
+# Finnish Plate Validator
+
+A small C++17 validation module for the standard Finnish passenger-car plate format, ABC-123: three uppercase letters, a dash, three digits. Beyond a boolean check, the validator reports *which rule failed first* — the shape real validation code takes, because interactive and logging callers need a reason, not a bare rejection.
+
+## Structure and build
+
+```
+finnish_plate_validator/
+├── include/plate_validator.h    Verdict enum, check / is_valid / describe
+├── src/plate_validator.cpp      Ordered rule checks, UB-safe classification
+├── src/main.cpp                 Line-by-line front end (interactive or piped)
+├── tests/test_plate.cpp         Accept set, per-reason cases, ordering, boundaries
+└── Makefile                     make test
+```
+
+```bash
+make            # build the tool and the test
+make test       # run the test suite
+./plate_validator   # then type candidates, or pipe a file in
+```
+
+Builds with zero warnings under `g++ -std=c++17 -Wall -Wextra -O2`.
+
+## Verified results
+
+```
+[test_plate] accept + reasons + ordering + boundaries -> PASS
+```
+
+```
+ABC-123: valid
+abc-123: invalid - first three characters must be uppercase letters
+ABC 123: invalid - fourth character must be a dash
+ABC-12X: invalid - last three characters must be digits
+```
+
+The four verified property groups: a well-formed accept set spanning the letter and digit ranges; a dedicated case per failure reason (both length directions, lowercase, digit-in-letters, wrong and missing separator, letter-in-digits); rule *ordering* pinned when several rules break at once (length outranks letters outranks separator outranks digits); and boundary characters — `@` and `[` around A–Z, `/` and `:` around 0–9 in the character encoding — plus a raw non-ASCII byte, all rejected, the last one exercising the `unsigned char` cast that keeps ctype classification inside defined behaviour on negative-char platforms.
+
+## Design notes
+
+Length is checked first because every later rule indexes fixed positions and relies on it. The verdict is always the first failure in left-to-right reading order, so the reported reason matches what a human scanning the plate would notice. The validation core takes `std::string_view` and does no I/O, keeping it directly reusable and testable; the interactive front end is a thin loop over it.
+
+## Author
+
+**Md Moklesur Rahman** — GitHub: [dipucwc](https://github.com/dipucwc) · [LinkedIn](https://www.linkedin.com/in/md-moklesur-rahman-65a63962/)
