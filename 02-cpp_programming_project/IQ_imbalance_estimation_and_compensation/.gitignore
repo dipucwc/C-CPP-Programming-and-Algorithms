@@ -1,0 +1,12 @@
+# Build artifacts
+build/
+cmake-build-*/
+*.o
+iq_demo
+test_iq
+test_iq_imbalance
+
+# Editor and OS noise
+.vscode/
+.idea/
+.DS_Store
