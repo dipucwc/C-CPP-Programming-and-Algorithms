@@ -1,0 +1,9 @@
+# Build artifacts
+rf_budget
+test_rf_cascade
+*.o
+
+# Editor and OS noise
+.vscode/
+.idea/
+.DS_Store
