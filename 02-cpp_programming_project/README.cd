@@ -1,0 +1,1922 @@
+# C++ Programming Projects
+
+This folder contains C++ projects focused on modern software design, embedded applications, digital signal processing, wireless algorithms, real-time data processing, memory management, multithreading, communication protocols, testing, and performance analysis.
+
+The current projects use structured software architecture, reusable classes, templates, Standard Library components, smart pointers, RAII, explicit error handling, automated builds, and organized testing.
+
+The planned projects will extend the folder with fixed-point DSP, lock-free communication, deterministic memory management, wireless physical-layer processing, protocol frameworks, task scheduling, hardware abstraction, fault handling, and high-performance data pipelines.
+
+## Objectives
+
+The main objectives of this folder are to:
+
+* design modular and maintainable C++ applications;
+* create reusable classes and interfaces;
+* apply object-oriented and generic programming;
+* manage resources safely using RAII;
+* use smart pointers and clear ownership rules;
+* implement embedded, DSP, wireless, and communication applications;
+* develop thread-safe and real-time-oriented software;
+* create portable builds using CMake;
+* verify software with unit, integration, stress, and performance tests;
+* measure execution time, memory usage, latency, and throughput;
+* demonstrate practical C++ skills for technical software positions.
+
+## Technical Areas
+
+The projects cover:
+
+* C++17 and C++20;
+* object-oriented programming;
+* class design and encapsulation;
+* composition and polymorphism;
+* dependency injection;
+* templates and generic programming;
+* Standard Library containers and algorithms;
+* smart pointers;
+* RAII;
+* move semantics;
+* copy and move constructors;
+* function objects and lambda expressions;
+* callback interfaces;
+* state machines;
+* event-driven software;
+* embedded C++;
+* sensor-data processing;
+* digital signal processing;
+* fixed-point arithmetic;
+* wireless and baseband algorithms;
+* multithreading;
+* mutexes and condition variables;
+* atomic operations;
+* lock-free data structures;
+* custom memory allocators;
+* communication protocols;
+* hardware abstraction;
+* software testing;
+* static and dynamic analysis;
+* performance profiling;
+* CMake;
+* GitHub Actions.
+
+## Folder Structure
+
+```text
+01-cpp-programming-projects/
+│
+├── 01-object-oriented-data-processing-engine/
+│   ├── include/
+│   ├── src/
+│   ├── tests/
+│   ├── data/
+│   ├── CMakeLists.txt
+│   └── README.md
+│
+├── 02-template-based-data-structure-library/
+│   ├── include/
+│   ├── tests/
+│   ├── benchmarks/
+│   ├── CMakeLists.txt
+│   └── README.md
+│
+├── 03-event-driven-state-machine/
+│   ├── include/
+│   ├── src/
+│   ├── tests/
+│   ├── examples/
+│   └── README.md
+│
+├── 04-thread-safe-circular-buffer/
+│   ├── include/
+│   ├── src/
+│   ├── tests/
+│   ├── benchmarks/
+│   └── README.md
+│
+├── 05-sensor-acquisition-and-dsp-pipeline/
+│   ├── include/
+│   ├── src/
+│   ├── tests/
+│   ├── data/
+│   └── README.md
+│
+├── 06-embedded-communication-framework/
+│   ├── include/
+│   ├── src/
+│   ├── platform/
+│   ├── tests/
+│   └── README.md
+│
+├── 07-fixed-point-dsp-library/
+│   ├── include/
+│   ├── src/
+│   ├── tests/
+│   ├── reference/
+│   ├── benchmarks/
+│   └── README.md
+│
+├── 08-real-time-task-framework/
+│   ├── include/
+│   ├── src/
+│   ├── tests/
+│   ├── platform/
+│   └── README.md
+│
+├── 09-custom-memory-pool/
+│   ├── include/
+│   ├── src/
+│   ├── tests/
+│   ├── benchmarks/
+│   └── README.md
+│
+├── 10-multithreaded-processing-pipeline/
+│   ├── include/
+│   ├── src/
+│   ├── tests/
+│   ├── benchmarks/
+│   └── README.md
+│
+├── 11-binary-protocol-framework/
+│   ├── include/
+│   ├── src/
+│   ├── tests/
+│   ├── fuzz/
+│   └── README.md
+│
+├── 12-lock-free-spsc-queue/
+│   ├── include/
+│   ├── tests/
+│   ├── benchmarks/
+│   └── README.md
+│
+├── 13-wireless-dsp-processing-chain/
+│   ├── include/
+│   ├── src/
+│   ├── tests/
+│   ├── reference/
+│   └── README.md
+│
+├── 14-plugin-based-algorithm-framework/
+│   ├── include/
+│   ├── src/
+│   ├── plugins/
+│   ├── tests/
+│   └── README.md
+│
+├── 15-fault-tolerant-embedded-controller/
+│   ├── include/
+│   ├── src/
+│   ├── platform/
+│   ├── tests/
+│   └── README.md
+│
+├── common/
+│   ├── include/
+│   └── src/
+│
+├── docs/
+│   ├── architecture/
+│   ├── coding-guidelines/
+│   └── verification/
+│
+├── .github/
+│   └── workflows/
+│
+├── CMakeLists.txt
+└── README.md
+```
+
+The structure may be updated as new projects are implemented.
+
+# Current Projects
+
+## 1. Object-Oriented Data-Processing Engine
+
+This project implements a configurable processing framework using classes and independent processing modules.
+
+The framework may process:
+
+* sensor samples;
+* measurement data;
+* communication data;
+* signal samples;
+* recorded test data.
+
+The software is divided into modules for:
+
+* input acquisition;
+* validation;
+* preprocessing;
+* filtering;
+* numerical processing;
+* statistical analysis;
+* threshold detection;
+* result generation;
+* output storage;
+* runtime configuration.
+
+### Processing Flow
+
+```text
+Input Source
+     |
+     v
+Data Validator
+     |
+     v
+Preprocessing Stage
+     |
+     v
+Processing Pipeline
+     |
+     v
+Result Analyzer
+     |
+     v
+Output Writer
+```
+
+### Example Processing Interface
+
+```cpp
+class ProcessingStage
+{
+public:
+    virtual ~ProcessingStage() = default;
+
+    virtual void process(
+        std::vector<double>& samples
+    ) = 0;
+
+    [[nodiscard]]
+    virtual std::string name() const = 0;
+};
+```
+
+### Example Pipeline
+
+```cpp
+class ProcessingPipeline
+{
+public:
+    void addStage(
+        std::unique_ptr<ProcessingStage> stage
+    );
+
+    void execute(
+        std::vector<double>& samples
+    );
+
+private:
+    std::vector<
+        std::unique_ptr<ProcessingStage>
+    > stages_;
+};
+```
+
+### Technical Concepts
+
+* abstract interfaces;
+* runtime polymorphism;
+* class composition;
+* smart pointers;
+* RAII;
+* dependency injection;
+* reusable processing blocks;
+* configurable software pipelines;
+* unit-testable classes.
+
+## 2. Template-Based Data-Structure Library
+
+This project implements reusable data structures using C++ templates.
+
+The library may include:
+
+* fixed-capacity arrays;
+* dynamic arrays;
+* stacks;
+* queues;
+* circular buffers;
+* priority queues;
+* linked lists;
+* binary trees;
+* hash tables;
+* fixed-capacity containers.
+
+### Example Static Stack
+
+```cpp
+template<typename T, std::size_t Capacity>
+class StaticStack
+{
+public:
+    bool push(const T& value);
+
+    bool push(T&& value);
+
+    bool pop(T& value);
+
+    [[nodiscard]]
+    bool empty() const noexcept;
+
+    [[nodiscard]]
+    bool full() const noexcept;
+
+    [[nodiscard]]
+    std::size_t size() const noexcept;
+
+private:
+    std::array<T, Capacity> storage_{};
+    std::size_t size_{0};
+};
+```
+
+### Technical Concepts
+
+* class templates;
+* function templates;
+* type safety;
+* compile-time capacity;
+* move-aware insertion;
+* iterator support;
+* reusable containers;
+* complexity analysis;
+* exception guarantees.
+
+## 3. Event-Driven State Machine
+
+This project implements a reusable state-machine framework for embedded controllers, device management, protocol handling, and fault recovery.
+
+The implementation separates:
+
+* states;
+* events;
+* transition rules;
+* entry actions;
+* exit actions;
+* timeout processing;
+* error states;
+* recovery logic.
+
+### Example States
+
+```cpp
+enum class SystemState
+{
+    Reset,
+    Initializing,
+    Idle,
+    Active,
+    Recovery,
+    Fault
+};
+```
+
+### Example Events
+
+```cpp
+enum class SystemEvent
+{
+    Start,
+    Stop,
+    DataReady,
+    Timeout,
+    Error,
+    Reset
+};
+```
+
+### Example State Interface
+
+```cpp
+class StateHandler
+{
+public:
+    virtual ~StateHandler() = default;
+
+    virtual SystemState handle(
+        SystemEvent event
+    ) = 0;
+
+    virtual void onEntry()
+    {
+    }
+
+    virtual void onExit()
+    {
+    }
+};
+```
+
+### Technical Concepts
+
+* strongly typed enumerations;
+* state pattern;
+* transition tables;
+* event queues;
+* polymorphic state handlers;
+* timeout handling;
+* invalid-transition detection;
+* fault recovery;
+* deterministic state changes.
+
+## 4. Thread-Safe Circular Buffer
+
+This project implements a circular buffer for transferring streaming data between threads or processing modules.
+
+Possible applications include:
+
+* UART buffering;
+* ADC sample storage;
+* audio streaming;
+* network-packet buffering;
+* DSP sample transfer;
+* sensor-data acquisition;
+* producer-consumer communication.
+
+### Example Interface
+
+```cpp
+template<typename T>
+class CircularBuffer
+{
+public:
+    explicit CircularBuffer(
+        std::size_t capacity
+    );
+
+    bool push(const T& value);
+
+    bool push(T&& value);
+
+    bool pop(T& value);
+
+    [[nodiscard]]
+    bool empty() const;
+
+    [[nodiscard]]
+    bool full() const;
+
+    [[nodiscard]]
+    std::size_t size() const;
+
+private:
+    std::vector<T> storage_;
+    std::size_t head_{0};
+    std::size_t tail_{0};
+    std::size_t count_{0};
+
+    mutable std::mutex mutex_;
+};
+```
+
+### Technical Concepts
+
+* producer-consumer communication;
+* template-based storage;
+* mutex synchronization;
+* condition variables;
+* move semantics;
+* overflow policies;
+* fixed-capacity buffering;
+* latency measurement;
+* throughput measurement.
+
+## 5. Sensor Acquisition and DSP Pipeline
+
+This project implements a structured processing chain for sensor, measurement, or signal data.
+
+### Processing Flow
+
+```text
+Sample Acquisition
+        |
+        v
+Range Validation
+        |
+        v
+Offset Correction
+        |
+        v
+Digital Filtering
+        |
+        v
+Feature Extraction
+        |
+        v
+Threshold Detection
+        |
+        v
+Status Generation
+```
+
+### Processing Functions
+
+The project may include:
+
+* sample validation;
+* offset removal;
+* moving-average filtering;
+* FIR filtering;
+* RMS calculation;
+* peak detection;
+* energy calculation;
+* minimum and maximum tracking;
+* threshold-crossing detection;
+* abnormal-condition detection;
+* result logging.
+
+### Example Filter Interface
+
+```cpp
+class DigitalFilter
+{
+public:
+    virtual ~DigitalFilter() = default;
+
+    virtual double processSample(
+        double input
+    ) = 0;
+
+    virtual void reset() = 0;
+};
+```
+
+### Technical Concepts
+
+* streaming data processing;
+* stateful filter classes;
+* reusable DSP interfaces;
+* runtime filter configuration;
+* numerical accuracy;
+* reference-vector comparison;
+* execution-time measurement;
+* processing-state management.
+
+## 6. Embedded Communication Framework
+
+This project implements a layered communication framework for embedded and firmware applications.
+
+The framework may support:
+
+* UART;
+* SPI;
+* I²C;
+* transmit and receive queues;
+* message framing;
+* CRC validation;
+* timeout handling;
+* protocol events;
+* communication errors;
+* retry and recovery logic.
+
+### Software Layers
+
+```text
+Application Layer
+       |
+       v
+Protocol Layer
+       |
+       v
+Communication Service
+       |
+       v
+Hardware Abstraction
+       |
+       v
+Platform Driver
+```
+
+### Example Device Interface
+
+```cpp
+class CommunicationDevice
+{
+public:
+    virtual ~CommunicationDevice() = default;
+
+    virtual bool initialize() = 0;
+
+    virtual std::size_t write(
+        std::span<const std::uint8_t> data
+    ) = 0;
+
+    virtual std::size_t read(
+        std::span<std::uint8_t> buffer
+    ) = 0;
+
+    virtual void shutdown() = 0;
+};
+```
+
+### Technical Concepts
+
+* interface-based architecture;
+* dependency inversion;
+* platform-independent protocol logic;
+* mock-device support;
+* callback events;
+* timeout management;
+* message queues;
+* communication recovery;
+* host-based testing.
+
+# Planned Projects
+
+## 7. Fixed-Point DSP Library
+
+This project will implement reusable signal-processing algorithms using fixed-point arithmetic.
+
+The library may contain:
+
+* Q15 arithmetic;
+* Q31 arithmetic;
+* saturating addition and subtraction;
+* fixed-point multiplication;
+* rounding;
+* scaling;
+* FIR filters;
+* IIR filters;
+* FFT processing;
+* complex arithmetic;
+* magnitude calculations;
+* signal-power calculations;
+* automatic gain scaling.
+
+### Q15 Representation
+
+A floating-point value can be converted to Q15 using:
+
+[
+x_{\mathrm{Q15}}
+================
+
+\operatorname{round}
+\left(
+x \times 2^{15}
+\right)
+]
+
+The approximate floating-point value is recovered using:
+
+[
+x
+\approx
+\frac{x_{\mathrm{Q15}}}{2^{15}}
+]
+
+### Example Q15 Class
+
+```cpp
+class Q15
+{
+public:
+    Q15() = default;
+
+    explicit Q15(float value);
+
+    static Q15 fromRaw(
+        std::int16_t value
+    );
+
+    [[nodiscard]]
+    float toFloat() const;
+
+    [[nodiscard]]
+    std::int16_t raw() const noexcept;
+
+    Q15 operator+(const Q15& other) const;
+
+    Q15 operator-(const Q15& other) const;
+
+    Q15 operator*(const Q15& other) const;
+
+private:
+    std::int16_t value_{0};
+};
+```
+
+### Technical Focus
+
+* bit-accurate arithmetic;
+* saturation handling;
+* quantization-noise analysis;
+* coefficient scaling;
+* overflow protection;
+* floating-point comparison;
+* signal-to-quantization-noise ratio;
+* execution-cycle measurement;
+* memory optimization;
+* SIMD-ready interfaces.
+
+## 8. Real-Time Task Framework
+
+This project will implement a lightweight framework for periodic and event-driven tasks.
+
+The framework may support:
+
+* periodic tasks;
+* one-shot tasks;
+* priorities;
+* task enable and disable operations;
+* release-time tracking;
+* deadline monitoring;
+* execution counters;
+* timer rollover handling;
+* runtime statistics;
+* fault reporting.
+
+### Example Task Interface
+
+```cpp
+class Task
+{
+public:
+    virtual ~Task() = default;
+
+    virtual void execute() = 0;
+
+    [[nodiscard]]
+    virtual std::chrono::milliseconds period() const = 0;
+
+    [[nodiscard]]
+    virtual std::string_view name() const = 0;
+};
+```
+
+### Technical Focus
+
+* deterministic task dispatch;
+* execution-budget monitoring;
+* deadline tracking;
+* timer overflow handling;
+* scheduling jitter;
+* missed-deadline detection;
+* testable time sources;
+* task lifecycle control.
+
+## 9. Custom Memory Pool
+
+This project will implement a fixed-capacity object pool for predictable memory allocation.
+
+The allocator may support:
+
+* fixed-size blocks;
+* multiple object types;
+* object construction;
+* object destruction;
+* free-list management;
+* alignment handling;
+* allocation statistics;
+* invalid-release detection;
+* corruption guards;
+* optional thread safety.
+
+### Example Object Pool
+
+```cpp
+template<typename T, std::size_t Capacity>
+class ObjectPool
+{
+public:
+    template<typename... Args>
+    T* create(Args&&... args);
+
+    bool destroy(T* object);
+
+    [[nodiscard]]
+    std::size_t available() const noexcept;
+
+    [[nodiscard]]
+    std::size_t used() const noexcept;
+
+private:
+    alignas(T)
+    std::array<
+        std::byte,
+        sizeof(T) * Capacity
+    > storage_{};
+
+    std::array<bool, Capacity> occupied_{};
+};
+```
+
+### Technical Focus
+
+* placement construction;
+* object-lifetime management;
+* aligned storage;
+* deterministic allocation;
+* fragmentation avoidance;
+* exception-safe object construction;
+* allocation-latency measurement;
+* allocator integration.
+
+## 10. Multithreaded Processing Pipeline
+
+This project will implement a multistage producer-consumer system.
+
+### Architecture
+
+```text
+Input Thread
+    |
+    v
+Acquisition Queue
+    |
+    v
+Processing Thread
+    |
+    v
+Result Queue
+    |
+    v
+Output Thread
+```
+
+### Main Components
+
+* input worker;
+* processing worker;
+* output worker;
+* bounded queues;
+* mutexes;
+* condition variables;
+* atomic shutdown flags;
+* thread error reporting;
+* runtime statistics.
+
+### Example Worker Interface
+
+```cpp
+class Worker
+{
+public:
+    virtual ~Worker();
+
+    void start();
+
+    void requestStop();
+
+    void join();
+
+    [[nodiscard]]
+    bool running() const noexcept;
+
+protected:
+    virtual void run() = 0;
+
+    std::atomic<bool> stopRequested_{false};
+
+private:
+    std::thread thread_;
+};
+```
+
+### Technical Focus
+
+* race-condition prevention;
+* deadlock avoidance;
+* queue backpressure;
+* thread lifecycle management;
+* graceful shutdown;
+* cross-thread error handling;
+* throughput measurement;
+* end-to-end latency analysis.
+
+## 11. Binary Protocol Framework
+
+This project will implement a parser and encoder for a framed binary communication protocol.
+
+### Example Frame
+
+```text
++------------+--------+------+---------+----------+
+| Start Byte | Length | Type | Payload | CRC      |
++------------+--------+------+---------+----------+
+```
+
+The parser will accept a continuous byte stream and preserve its state between calls.
+
+### Parser States
+
+* synchronization search;
+* header reception;
+* length validation;
+* payload reception;
+* CRC reception;
+* frame validation;
+* error recovery.
+
+### Example Message Type
+
+```cpp
+struct ProtocolMessage
+{
+    std::uint8_t type{0};
+
+    std::vector<std::uint8_t> payload;
+
+    std::uint16_t crc{0};
+};
+```
+
+### Technical Focus
+
+* streaming parsing;
+* partial-frame handling;
+* malformed-frame recovery;
+* synchronization recovery;
+* CRC validation;
+* buffer protection;
+* protocol versioning;
+* fuzz testing;
+* invalid-input handling.
+
+## 12. Lock-Free SPSC Queue
+
+This project will implement a single-producer, single-consumer queue using atomic operations.
+
+Possible applications include:
+
+* DSP sample transfer;
+* thread-to-thread communication;
+* high-rate data acquisition;
+* real-time logging;
+* communication-event queues.
+
+### Example Structure
+
+```cpp
+template<typename T, std::size_t Capacity>
+class SpscQueue
+{
+public:
+    bool push(const T& value);
+
+    bool push(T&& value);
+
+    bool pop(T& value);
+
+    [[nodiscard]]
+    bool empty() const noexcept;
+
+private:
+    alignas(64)
+    std::atomic<std::size_t> head_{0};
+
+    alignas(64)
+    std::atomic<std::size_t> tail_{0};
+
+    std::array<T, Capacity> storage_{};
+};
+```
+
+### Technical Focus
+
+* acquire and release memory ordering;
+* atomic index management;
+* cache-line alignment;
+* false-sharing prevention;
+* index wraparound;
+* lock-free correctness;
+* stress testing;
+* latency and throughput comparison.
+
+## 13. Wireless DSP Processing Chain
+
+This project will implement a configurable physical-layer processing chain in C++.
+
+Possible processing blocks include:
+
+* bit generation;
+* modulation;
+* OFDM processing;
+* synchronization;
+* channel estimation;
+* equalization;
+* demodulation;
+* error-rate measurement;
+* signal-quality analysis.
+
+### Processing Chain
+
+```text
+Bit Source
+    |
+    v
+Modulator
+    |
+    v
+OFDM Transmitter
+    |
+    v
+Channel Model
+    |
+    v
+Synchronization
+    |
+    v
+Channel Estimator
+    |
+    v
+Equalizer
+    |
+    v
+Demodulator
+    |
+    v
+Performance Analyzer
+```
+
+### Example Processing Block
+
+```cpp
+template<typename Input, typename Output>
+class ProcessingBlock
+{
+public:
+    virtual ~ProcessingBlock() = default;
+
+    virtual Output process(
+        const Input& input
+    ) = 0;
+
+    virtual void reset() = 0;
+};
+```
+
+### Technical Focus
+
+* complex-number processing;
+* reusable physical-layer algorithms;
+* algorithm replacement through interfaces;
+* floating-point and fixed-point paths;
+* reference-vector validation;
+* MATLAB or Python comparison;
+* memory reuse;
+* execution-time benchmarking.
+
+## 14. Plugin-Based Algorithm Framework
+
+This project will implement a framework where algorithms can be selected or replaced without changing the main application.
+
+Possible plugin types include:
+
+* filters;
+* equalizers;
+* channel estimators;
+* detectors;
+* modulation algorithms;
+* coding algorithms;
+* data encoders.
+
+### Example Algorithm Interface
+
+```cpp
+class Algorithm
+{
+public:
+    virtual ~Algorithm() = default;
+
+    virtual void configure(
+        const Configuration& configuration
+    ) = 0;
+
+    virtual ProcessingResult execute(
+        const ProcessingInput& input
+    ) = 0;
+
+    [[nodiscard]]
+    virtual std::string_view name() const = 0;
+};
+```
+
+### Technical Focus
+
+* strategy pattern;
+* factory pattern;
+* plugin registration;
+* runtime algorithm selection;
+* dependency injection;
+* configuration validation;
+* interface compatibility;
+* algorithm comparison.
+
+## 15. Fault-Tolerant Embedded Controller
+
+This project will combine several modules into a complete embedded software platform.
+
+The controller may include:
+
+* hardware abstraction;
+* task scheduling;
+* sensor acquisition;
+* digital filtering;
+* state-machine control;
+* communication services;
+* logging;
+* watchdog monitoring;
+* fault detection;
+* recovery procedures.
+
+### Fault Conditions
+
+The controller may detect and handle:
+
+* sensor timeout;
+* communication failure;
+* invalid state transition;
+* corrupted data;
+* memory-pool exhaustion;
+* task deadline violation;
+* buffer overflow;
+* invalid configuration;
+* watchdog reset.
+
+### Technical Focus
+
+* safe-state transitions;
+* degraded operating modes;
+* watchdog integration;
+* fault isolation;
+* recovery strategies;
+* diagnostic storage;
+* fault injection;
+* system-level verification.
+
+# Software Architecture
+
+Larger projects should use a layered structure.
+
+```text
+Application Layer
+       |
+       v
+Service Layer
+       |
+       v
+Algorithm or Protocol Layer
+       |
+       v
+Platform Abstraction
+       |
+       v
+Operating System or Hardware
+```
+
+A typical project may use:
+
+```text
+project-name/
+│
+├── include/
+│   └── project/
+│       ├── project.hpp
+│       └── project_types.hpp
+│
+├── src/
+│   ├── project.cpp
+│   └── internal_module.cpp
+│
+├── tests/
+│   ├── test_project.cpp
+│   └── test_internal_module.cpp
+│
+├── examples/
+│   └── example_application.cpp
+│
+├── benchmarks/
+│   └── benchmark_project.cpp
+│
+├── docs/
+│   └── architecture.md
+│
+├── CMakeLists.txt
+└── README.md
+```
+
+## Interface Design
+
+Public interfaces should expose only the operations required by calling modules.
+
+Internal implementation details should remain private.
+
+```cpp
+class SignalProcessor
+{
+public:
+    virtual ~SignalProcessor() = default;
+
+    virtual void configure(
+        const ProcessorConfiguration& configuration
+    ) = 0;
+
+    virtual ProcessingResult process(
+        std::span<const float> input
+    ) = 0;
+
+    virtual void reset() = 0;
+};
+```
+
+Different algorithm implementations can use the same public interface.
+
+## Resource Management
+
+Resources should be controlled using RAII.
+
+Resources may include:
+
+* dynamically allocated memory;
+* files;
+* threads;
+* mutexes;
+* sockets;
+* device handles;
+* communication channels.
+
+Example:
+
+```cpp
+class FileHandle
+{
+public:
+    explicit FileHandle(
+        const std::filesystem::path& path
+    );
+
+    ~FileHandle();
+
+    FileHandle(const FileHandle&) = delete;
+
+    FileHandle& operator=(
+        const FileHandle&
+    ) = delete;
+
+    FileHandle(FileHandle&& other) noexcept;
+
+    FileHandle& operator=(
+        FileHandle&& other
+    ) noexcept;
+
+private:
+    std::FILE* handle_{nullptr};
+};
+```
+
+The destructor releases the resource automatically.
+
+## Smart Pointers
+
+Use `std::unique_ptr` for exclusive ownership.
+
+```cpp
+auto processor =
+    std::make_unique<FirFilter>(
+        coefficients
+    );
+```
+
+Use `std::shared_ptr` only when shared ownership is required.
+
+```cpp
+auto configuration =
+    std::make_shared<SystemConfiguration>();
+```
+
+Use `std::weak_ptr` for non-owning references to shared objects.
+
+Raw pointers may be used for non-owning access when ownership is clearly documented.
+
+## Copy and Move Semantics
+
+Classes that manage resources should define or disable copying and moving intentionally.
+
+```cpp
+class ProcessingBuffer
+{
+public:
+    explicit ProcessingBuffer(
+        std::size_t size
+    );
+
+    ProcessingBuffer(
+        const ProcessingBuffer&
+    ) = delete;
+
+    ProcessingBuffer& operator=(
+        const ProcessingBuffer&
+    ) = delete;
+
+    ProcessingBuffer(
+        ProcessingBuffer&&
+    ) noexcept = default;
+
+    ProcessingBuffer& operator=(
+        ProcessingBuffer&&
+    ) noexcept = default;
+
+private:
+    std::unique_ptr<float[]> data_;
+    std::size_t size_{0};
+};
+```
+
+## Error Handling
+
+Projects may use:
+
+* exceptions;
+* status enumerations;
+* `std::optional`;
+* `std::variant`;
+* expected-style result objects.
+
+### Example Status Type
+
+```cpp
+enum class Status
+{
+    Ok,
+    InvalidArgument,
+    NotInitialized,
+    BufferFull,
+    BufferEmpty,
+    Timeout,
+    DataCorruption,
+    ResourceUnavailable,
+    InternalError
+};
+```
+
+### Example Result Structure
+
+```cpp
+template<typename T>
+struct OperationResult
+{
+    Status status{Status::InternalError};
+
+    std::optional<T> value;
+
+    [[nodiscard]]
+    bool success() const noexcept
+    {
+        return status == Status::Ok;
+    }
+};
+```
+
+# Coding Guidelines
+
+The projects follow these practices:
+
+* use clear class, function, and variable names;
+* keep classes focused on one responsibility;
+* prefer composition over unnecessary inheritance;
+* apply `const` correctly;
+* use `constexpr` for compile-time values;
+* use `enum class` for strongly typed enumerations;
+* use smart pointers for ownership;
+* avoid unnecessary raw memory allocation;
+* use RAII for resource handling;
+* validate public-interface arguments;
+* avoid uncontrolled global state;
+* use move semantics for large objects;
+* use Standard Library algorithms where appropriate;
+* isolate platform-specific code;
+* document assumptions and limitations;
+* compile without warnings.
+
+## Fixed-Width Integer Types
+
+Embedded, DSP, and protocol projects should use `<cstdint>`.
+
+```cpp
+#include <cstdint>
+
+std::uint8_t messageType{0};
+
+std::int16_t sensorSample{0};
+
+std::uint32_t timestampTicks{0};
+
+std::int64_t accumulatedEnergy{0};
+```
+
+## Span-Based Interfaces
+
+`std::span` can represent an external buffer without copying its data.
+
+```cpp
+Status processSamples(
+    std::span<const std::int16_t> input,
+    std::span<float> output
+);
+```
+
+This keeps the buffer pointer and length together.
+
+## Const Correctness
+
+Functions that do not modify object state should be marked `const`.
+
+```cpp
+class Statistics
+{
+public:
+    [[nodiscard]]
+    double mean() const noexcept;
+
+    [[nodiscard]]
+    double variance() const noexcept;
+
+    [[nodiscard]]
+    std::size_t sampleCount() const noexcept;
+};
+```
+
+## Compile-Time Constants
+
+Use `constexpr` for values known during compilation.
+
+```cpp
+constexpr std::size_t fftSize = 1024;
+
+constexpr double samplingFrequency = 30.72e6;
+
+constexpr std::size_t maximumFrameSize = 4096;
+```
+
+# Build Instructions
+
+The projects use CMake as the primary build system.
+
+## Requirements
+
+* GCC, Clang, or Microsoft Visual C++;
+* C++17 or C++20 support;
+* CMake;
+* Git;
+* optional unit-test framework;
+* optional static-analysis tools.
+
+## Configure
+
+```bash
+cmake -S . -B build
+```
+
+## Build
+
+```bash
+cmake --build build
+```
+
+## Release Build
+
+```bash
+cmake -S . -B build \
+    -DCMAKE_BUILD_TYPE=Release
+
+cmake --build build
+```
+
+## Run Tests
+
+```bash
+ctest \
+    --test-dir build \
+    --output-on-failure
+```
+
+## GCC Example
+
+```bash
+g++ \
+    -std=c++20 \
+    -Wall \
+    -Wextra \
+    -Wpedantic \
+    -Wconversion \
+    -Wshadow \
+    -Wformat=2 \
+    -Wundef \
+    src/main.cpp \
+    src/module.cpp \
+    -Iinclude \
+    -pthread \
+    -o application
+```
+
+## Debug Build
+
+```bash
+g++ \
+    -std=c++20 \
+    -Wall \
+    -Wextra \
+    -Wpedantic \
+    -g3 \
+    -O0 \
+    src/main.cpp \
+    src/module.cpp \
+    -Iinclude \
+    -pthread \
+    -o application
+```
+
+## Optimized Build
+
+```bash
+g++ \
+    -std=c++20 \
+    -Wall \
+    -Wextra \
+    -Wpedantic \
+    -O2 \
+    -DNDEBUG \
+    src/main.cpp \
+    src/module.cpp \
+    -Iinclude \
+    -pthread \
+    -o application
+```
+
+## AddressSanitizer Build
+
+```bash
+g++ \
+    -std=c++20 \
+    -Wall \
+    -Wextra \
+    -Wpedantic \
+    -fsanitize=address,undefined \
+    -fno-omit-frame-pointer \
+    -g \
+    src/main.cpp \
+    src/module.cpp \
+    -Iinclude \
+    -pthread \
+    -o application_sanitized
+```
+
+Run:
+
+```bash
+./application_sanitized
+```
+
+## ThreadSanitizer Build
+
+```bash
+g++ \
+    -std=c++20 \
+    -Wall \
+    -Wextra \
+    -Wpedantic \
+    -fsanitize=thread \
+    -g \
+    src/main.cpp \
+    src/module.cpp \
+    -Iinclude \
+    -pthread \
+    -o application_thread_sanitized
+```
+
+# Testing Strategy
+
+Each project should include structured verification rather than only one demonstration run.
+
+Testing may include:
+
+* unit testing;
+* integration testing;
+* interface testing;
+* boundary-value testing;
+* invalid-input testing;
+* exception-path testing;
+* resource-lifetime testing;
+* concurrency stress testing;
+* regression testing;
+* performance benchmarking;
+* fuzz testing.
+
+## Unit Tests
+
+Unit tests may validate:
+
+* filter outputs;
+* queue operations;
+* state-machine transitions;
+* CRC calculations;
+* parser behaviour;
+* allocator operation;
+* error-condition handling;
+* ownership transfer;
+* move construction;
+* object cleanup.
+
+## Boundary Tests
+
+Boundary tests may include:
+
+* empty containers;
+* one-element containers;
+* maximum-capacity buffers;
+* full queues;
+* empty queues;
+* zero-length input;
+* maximum-size protocol frames;
+* timer rollover;
+* minimum and maximum numeric values.
+
+## Invalid-Input Tests
+
+Examples include:
+
+* invalid configuration;
+* malformed frames;
+* unsupported message types;
+* incorrect buffer sizes;
+* invalid state transitions;
+* corrupted CRC values;
+* unavailable resources;
+* invalid timing values.
+
+## Resource-Lifetime Tests
+
+Resource tests should verify:
+
+* destructors release resources;
+* move operations preserve ownership;
+* copied objects behave correctly;
+* worker threads are joined;
+* files are closed;
+* memory is released;
+* exceptions do not leave invalid objects.
+
+## Concurrency Tests
+
+Concurrency tests may include:
+
+* repeated producer-consumer operation;
+* queue saturation;
+* shutdown during processing;
+* repeated worker start and stop cycles;
+* long-duration execution;
+* queue wraparound;
+* race detection.
+
+# Static Analysis
+
+## Cppcheck
+
+```bash
+cppcheck \
+    --enable=all \
+    --std=c++20 \
+    --suppress=missingIncludeSystem \
+    include src tests
+```
+
+## Clang-Tidy
+
+```bash
+clang-tidy \
+    src/*.cpp \
+    -- \
+    -std=c++20 \
+    -Iinclude
+```
+
+Static analysis can identify:
+
+* uninitialized variables;
+* unsafe conversions;
+* invalid pointer access;
+* missing virtual destructors;
+* unnecessary copies;
+* incorrect move operations;
+* suspicious conditions;
+* unchecked return values;
+* concurrency problems.
+
+# Dynamic Analysis
+
+Valgrind may be used on supported systems.
+
+```bash
+valgrind \
+    --leak-check=full \
+    --show-leak-kinds=all \
+    --track-origins=yes \
+    ./application
+```
+
+Dynamic analysis can detect:
+
+* memory leaks;
+* invalid reads;
+* invalid writes;
+* use of uninitialized memory;
+* use-after-free errors;
+* incorrect object lifetime;
+* invalid resource release.
+
+# Performance Evaluation
+
+Projects involving DSP, queues, concurrency, protocol processing, or real-time operation should include measurable results.
+
+Possible measurements include:
+
+* average execution time;
+* maximum execution time;
+* processing throughput;
+* end-to-end latency;
+* queue latency;
+* allocation latency;
+* memory usage;
+* stack usage;
+* heap usage;
+* dropped-message count;
+* dropped-sample count;
+* CPU utilization.
+
+### Example Benchmark Output
+
+```text
+Frames processed:           1,000,000
+Average processing time:    3.1 us/frame
+Maximum processing time:    6.4 us/frame
+Average queue latency:      1.2 us
+Processing throughput:      322,000 frames/s
+Memory usage:               24.8 KB
+Dropped frames:             0
+Processing failures:        0
+```
+
+Performance reports should identify:
+
+* processor or test platform;
+* operating system;
+* compiler;
+* compiler version;
+* C++ standard;
+* optimization level;
+* number of iterations;
+* input size;
+* measurement method.
+
+# Continuous Integration
+
+GitHub Actions may be used to automate:
+
+* GCC builds;
+* Clang builds;
+* debug builds;
+* release builds;
+* unit tests;
+* sanitizer tests;
+* static analysis;
+* formatting checks;
+* code-coverage generation.
+
+A possible workflow may include:
+
+```text
+GCC Debug Build
+GCC Release Build
+Clang Debug Build
+AddressSanitizer Test
+UndefinedBehaviorSanitizer Test
+ThreadSanitizer Test
+Static Analysis
+Unit Tests
+```
+
+# Documentation Requirements
+
+Each project README should include:
+
+* project overview;
+* objective;
+* architecture;
+* class and module descriptions;
+* algorithm description;
+* interface description;
+* build instructions;
+* execution instructions;
+* test procedure;
+* example output;
+* performance results;
+* limitations;
+* planned improvements.
+
+Larger projects should also contain:
+
+* architecture diagrams;
+* class diagrams;
+* sequence diagrams;
+* data-flow diagrams;
+* state diagrams;
+* API documentation;
+* verification results;
+* benchmark results.
+
+# Skills Demonstrated
+
+This project collection demonstrates experience with:
+
+* modern C++;
+* object-oriented programming;
+* class design;
+* templates;
+* generic programming;
+* Standard Library containers;
+* Standard Library algorithms;
+* RAII;
+* smart pointers;
+* move semantics;
+* copy control;
+* polymorphism;
+* composition;
+* dependency injection;
+* lambda expressions;
+* callbacks;
+* state machines;
+* communication protocols;
+* sensor-data processing;
+* DSP implementation;
+* fixed-point arithmetic;
+* wireless physical-layer processing;
+* multithreading;
+* synchronization;
+* atomic operations;
+* lock-free programming;
+* deterministic memory management;
+* hardware abstraction;
+* fault handling;
+* software testing;
+* static analysis;
+* dynamic analysis;
+* performance profiling;
+* CMake;
+* Git;
+* continuous integration.
+
+# Relevance to Technical Roles
+
+The projects are relevant to positions such as:
+
+* Wireless DSP Firmware Developer;
+* Embedded C++ Software Developer;
+* Firmware Developer;
+* PHY Firmware Developer;
+* DSP Software Developer;
+* Real-Time Software Developer;
+* Systems Software Developer;
+* Communication Software Developer;
+* Baseband Software Developer;
+* Embedded Linux Developer;
+* Algorithm Implementation Developer;
+* Test and Verification Specialist.
+
+The project collection demonstrates C++ development for software that processes data, interacts with hardware, implements communication algorithms, manages concurrent operations, and operates under memory and timing constraints.
+
+# Development Roadmap
+
+| Phase   | Project                                | Status         |
+| ------- | -------------------------------------- | -------------- |
+| Phase 1 | Object-oriented data-processing engine | Planned        |
+| Phase 1 | Template-based data-structure library  | Planned        |
+| Phase 1 | Event-driven state machine             | Planned        |
+| Phase 1 | Thread-safe circular buffer            | Planned        |
+| Phase 1 | Sensor acquisition and DSP pipeline    | Planned        |
+| Phase 2 | Embedded communication framework       | Planned        |
+| Phase 3 | Fixed-point DSP library                | Planned        |
+| Phase 3 | Real-time task framework               | Planned        |
+| Phase 3 | Custom memory pool                     | Planned        |
+| Phase 3 | Multithreaded processing pipeline      | Planned        |
+| Phase 3 | Binary protocol framework              | Planned        |
+| Phase 3 | Lock-free SPSC queue                   | Planned        |
+| Phase 4 | Wireless DSP processing chain          | Planned        |
+| Phase 4 | Plugin-based algorithm framework       | Planned        |
+| Phase 4 | Fault-tolerant embedded controller     | Planned        |
+
+# Development Status
+
+This folder is under active development.
+
+The current work focuses on modern C++ applications using modular architecture, classes, templates, smart pointers, state machines, reusable data structures, embedded processing, digital signal processing, communication software, testing, debugging, and performance analysis.
+
+The planned work will extend the collection with fixed-point DSP, wireless processing, task scheduling, deterministic memory management, multithreaded processing, protocol parsing, atomic operations, lock-free communication, hardware abstraction, automated verification, and performance optimization.
+
+# Author
+
+**Md Moklesur Rahman**
+
+Wireless Communication, RF Systems, Embedded Software, DSP, and Physical-Layer Development
+Oulu, Finland
