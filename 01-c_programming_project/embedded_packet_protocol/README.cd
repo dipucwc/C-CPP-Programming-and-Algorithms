@@ -1,0 +1,39 @@
+# Embedded Packet Protocol: COBS Framing with CRC-16
+
+A C99 packet layer for byte-oriented links (UART, RS-485, USB CDC): consistent-overhead byte stuffing for unambiguous framing, CRC-16-CCITT for integrity, and a byte-wise resynchronizing parser designed for interrupt-driven reception.
+
+## Overview
+
+Raw byte streams have no frame boundaries: a receiver joining mid-stream, or recovering after line noise, cannot tell where a message starts. COBS (consistent-overhead byte stuffing) solves this by removing every 0x00 from the frame body in a single linear pass with at most one byte of overhead per 254 payload bytes, so a plain zero byte becomes an unambiguous delimiter. Framing alone cannot see bit flips inside a well-formed frame, so a CRC-16-CCITT is appended before encoding. The receiving parser is fed one byte at a time — the natural shape of a UART RX interrupt — cuts frames at the delimiter, decodes, verifies, and counts every accepted, corrupted, and malformed frame, regaining frame lock automatically after garbage.
+
+## Structure and build
+
+```
+packet_protocol/
+├── include/packet_protocol.h     CRC, COBS coder, frame builder, stream parser
+├── src/packet_protocol.c
+├── tests/test_packet.c           Published vectors, round trips, corruption, resync
+└── Makefile                      make test
+```
+
+Builds with zero warnings under `gcc -std=c99 -Wall -Wextra -Wpedantic -O2`.
+
+## Verified results
+
+```
+[test_packet] cobs-vectors + crc + roundtrip + corruption + resync -> PASS
+```
+
+The five verified properties: the encoder reproduces the published COBS examples (including the all-zeros vector); the CRC reproduces the standard CCITT check value 0x29B1 for "123456789"; payloads of every length from 0 to the 250-byte maximum — including payloads full of zeros — round-trip through the byte-fed parser intact; **every possible single-bit flip in a test frame is rejected** (exhaustive sweep over all positions and bits, zero corrupt frames accepted); and after fifty rounds of interleaved garbage bursts and truncated fragments, all fifty valid frames are still accepted, with the error counters accounting for the rest.
+
+## Design notes
+
+The single-block design (payload ≤ 250 bytes, so payload + CRC < 254) keeps the COBS coder to exactly one overhead byte and one back-patching pass — the common case for command/telemetry links, and the honest scope of this module. The parser stores everything in a caller-owned context, allocates nothing, and treats back-to-back delimiters as idle filler rather than errors, which allows the transmitter to use delimiter keep-alives for fast receiver synchronization.
+
+## Reference
+
+S. Cheshire and M. Baker, "Consistent Overhead Byte Stuffing," IEEE/ACM Transactions on Networking, 1999.
+
+## Author
+
+**Md Moklesur Rahman** — GitHub: [dipucwc](https://github.com/dipucwc) · [LinkedIn](https://www.linkedin.com/in/md-moklesur-rahman-65a63962/)
