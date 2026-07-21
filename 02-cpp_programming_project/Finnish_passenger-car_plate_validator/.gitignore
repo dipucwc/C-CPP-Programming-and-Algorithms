@@ -1,0 +1,9 @@
+# Build artifacts
+plate_validator
+test_plate
+*.o
+
+# Editor and OS noise
+.vscode/
+.idea/
+.DS_Store
