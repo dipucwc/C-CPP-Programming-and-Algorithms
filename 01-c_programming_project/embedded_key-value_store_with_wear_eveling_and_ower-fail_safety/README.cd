@@ -1,0 +1,46 @@
+# Embedded Key-Value Store with Wear Leveling and Power-Fail Safety
+
+A C99 persistent key-value store on emulated NOR flash — the settings/calibration storage problem of real firmware — with a log-structured record format, two-page wear-leveled compaction, and recovery from power loss at any instant, verified by fault injection at three distinct cut points.
+
+## Overview
+
+NOR flash imposes two constraints that make persistent storage genuinely hard: erasing is page-granular and is the only way to raise bits, and programming can only clear bits from 1 to 0. This project embraces both. The included flash emulator enforces the physics (programs are AND-ed into the array, so illegal overwrites corrupt silently, exactly as on the real device), counts erases per page for wear measurement, and can abort programming after a chosen number of bytes — simulated power loss — which is what the recovery tests are built on.
+
+The store is log-structured: every update appends a record (state, key, length, value, CRC-16) and then kills the superseded record by clearing its state byte, an operation flash permits without an erase. The state byte is programmed **after** the content, making it the commit point: a power cut leaves either a complete committed record or an uncommitted torn one that the mount scan discards. When the active page fills, live records are compacted onto the alternate page, which takes over via a page header with a monotonically increasing sequence number; the compaction step order (erase target → copy live → write header → erase source) guarantees that at every possible power-cut instant exactly one page wins the mount election and no committed data is lost. The alternation spreads erase wear evenly, which the tests measure rather than assume.
+
+## Structure and build
+
+```
+kv_store/
+├── include/flash_sim.h      NOR emulator: physics, wear counters, fault injection
+├── include/kv_store.h       mount / put / get / delete
+├── src/flash_sim.c
+├── src/kv_store.c           Record format, mount election, append path, compaction
+├── tests/test_kv.c          Six property groups incl. three power-cut scenarios
+└── Makefile                 make test
+```
+
+Builds with zero warnings under `gcc -std=c99 -Wall -Wextra -Wpedantic -O2`.
+
+## Verified results
+
+```
+[test_kv] physics + semantics + remount + compaction + wear + power-fail -> PASS
+```
+
+The six verified property groups:
+
+1. **Flash physics** — programming 0xAA then 0xCC yields 0x88 (bits only clear); erase restores 0xFF and increments the wear counter. Every other guarantee stands on this.
+2. **Semantics** — put/get round trip, overwrite (latest wins), delete, not-found.
+3. **Persistence** — after a simulated reboot (remount), every committed value reads back identically.
+4. **Compaction** — 500 updates of 32-byte values (many times one page's capacity) all succeed with live data intact, driving more than ten page erases.
+5. **Wear leveling** — after those cycles, the two pages' erase counts differ by at most one.
+6. **Power-fail recovery at three cut points**, via the fault countdown: mid-content (record never committed — old value survives), after content but before the commit byte (state never set — old value survives), and after the new record's commit but before the old record's kill (two valid records coexist — the newer wins by log position). After each cut the store is remounted and the correct value must read back.
+
+## Design notes
+
+The torn-tail detection at mount deserves mention: a record slot whose state byte reads erased terminates the log only if **every** byte after it is still 0xFF; any programmed byte in the tail is debris from an interrupted write, and the store schedules a cleaning compaction that rewrites only complete valid records. Reads always return the *last* valid record for a key, which is what makes cut point C harmless by construction rather than by special-case code. All storage is static, no allocation anywhere, and the store survives mount elections with both pages claiming validity (interrupted compaction) by sequence-number comparison with wraparound-safe arithmetic.
+
+## Author
+
+**Md Moklesur Rahman** — GitHub: [dipucwc](https://github.com/dipucwc) · [LinkedIn](https://www.linkedin.com/in/md-moklesur-rahman-65a63962/)
