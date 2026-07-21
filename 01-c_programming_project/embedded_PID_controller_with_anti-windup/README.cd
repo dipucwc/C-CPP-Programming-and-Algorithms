@@ -1,0 +1,39 @@
+# Embedded PID Controller with Anti-Windup
+
+A C99 discrete PID controller in the form used in production firmware: actuator output clamping, conditional-integration anti-windup, and derivative on measurement — verified in closed loop against a simulated first-order plant, including a closed-form steady-state check.
+
+## Overview
+
+The textbook PID formula fails in three predictable ways on real hardware, and this module addresses each. Real actuators saturate, so the output is clamped to configured limits. A clamped output breaks the integral term: the integrator keeps accumulating error the actuator cannot act on, then drags the response into deep overshoot when the error finally reverses — the classic windup failure. The cure implemented here is conditional integration: the accumulator is frozen exactly while advancing it would push a saturated output further into saturation, and released the moment either the output re-enters the linear range or the error reverses. Finally, the derivative acts on the measurement rather than the error, so a setpoint step injects no output spike through the derivative path ("derivative kick").
+
+The controller keeps all state in a caller-owned context, performs no allocation and no division in the update path (the sample time is folded into the gains at initialization), and is called once per sample period.
+
+## Structure and build
+
+```
+pid_controller/
+├── include/pid.h          Context, init, one-step update
+├── src/pid.c
+├── tests/test_pid.c       Closed-loop tests against a first-order plant
+└── Makefile               make test
+```
+
+Builds with zero warnings under `gcc -std=c99 -Wall -Wextra -Wpedantic -O2`.
+
+## Verified results
+
+```
+[test_pid] steady-state + settle + clamp + anti-windup + no-kick -> PASS
+```
+
+The five verified properties, each in closed loop with the discretized plant x[k+1] = x[k] + dt(Ku − x)/τ:
+
+1. **P-only steady-state error matches the closed form** — with Kp = 1 and plant gain K = 2, the loop settles to Kp·K/(1 + Kp·K) = 2/3 of the setpoint, within 1e-3 of the hand-derived value.
+2. **PI removes the error** — the loop settles onto the setpoint within 1e-4 and stays.
+3. **Clamping holds at every step** of an aggressive transient that genuinely saturates the output.
+4. **Anti-windup earns its keep** — against an unreachable setpoint (plant tops out below it), a deliberately unfrozen integral accumulated in parallel grows past 100 while the controller's stored integral stays bounded below half of it.
+5. **No setpoint kick** — at steady state, stepping the setpoint produces bit-identical outputs from a controller with derivative action and one without, proving the derivative path saw nothing.
+
+## Author
+
+**Md Moklesur Rahman** — GitHub: [dipucwc](https://github.com/dipucwc) · [LinkedIn](https://www.linkedin.com/in/md-moklesur-rahman-65a63962/)
